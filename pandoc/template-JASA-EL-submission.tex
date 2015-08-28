@@ -47,6 +47,15 @@ $endif$
 \setlength{\affilsep}{0in}
 
 %% %% %% %% %% %% %% %%
+%% HEADER AND FOOTER %%
+%% %% %% %% %% %% %% %%
+$if(header)$
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\rhead{$header$}
+$endif$
+
+%% %% %% %% %% %% %% %%
 %%  LIST OF FIGURES  %%
 %% %% %% %% %% %% %% %%
 \usepackage{tocloft}
@@ -136,7 +145,7 @@ $if(date)$\date{$date$}$else$\date{\today}$endif$
 \doublespacing
 
 $if(title)$\maketitle$if(runningtitle)$\begin{center}Running title: $runningtitle$\end{center}$endif$\newpage$endif$
-$if(abstract)$\begin{abstract}$abstract$\end{abstract}$if(pacs)$\bigskip\bigskip\bigskip PACS Numbers: $for(pacs)$$pacs$$sep$, $endfor$$endif$\newpage$endif$
+$if(abstract)$\begin{abstract}$abstract$\end{abstract}\bigskip\copyright $if(copyrightyear)$$copyrightyear$$endif$ Acoustical Society of America$if(pacs)$\bigskip\bigskip\bigskip PACS Numbers: $for(pacs)$$pacs$$sep$, $endfor$$endif$\newpage$endif$
 
 $for(include-before)$
 $include-before$
