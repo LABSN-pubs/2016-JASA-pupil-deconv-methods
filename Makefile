@@ -4,6 +4,7 @@ manuscript.pdf: bib/pupil-kernel.bib manuscript.tex
 	pdflatex -shell-escape manuscript.tex
 	pdflatex -shell-escape manuscript.tex
 	pdflatex -shell-escape manuscript.tex
+	. cleanup.bash
 
 manuscript.tex: manuscript.md figures/fig-1.eps
 	. link-figures.bash
