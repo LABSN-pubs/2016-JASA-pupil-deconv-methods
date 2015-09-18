@@ -55,12 +55,13 @@ For the dynamic range calculations, we first found the median pupil size in the 
 ## Task-related pupil response
 To determine task-related pupil response, listeners were given a target detection task to respond by button press to tones with pitch wobble. Base tones were 1000 Hz with a 10 ms Hann window taper at both ends and a total duration of 100 ms. Target tones had a frequency centered at 1000 Hz that varied sinusoidally with an amplitude of 100 Hz and a period matching the duration of the stimulus, and were otherwise identical to the base tones. A total of 300 tones were presented of which one-fourth were target tones, randomly distributed through the task. Inter-stimulus interval was roved linearly between 3 and 5 seconds. Tones were presented four blocks; each block began with a 10 second rest period to allow pupil size to stabilize before the tones began. Examples of both tone types were played for the listener prior to the task, and listeners were allowed breaks between blocks.
 
-Pupil size measurements were time-aligned to the onset of each tone and epoched from −0.5 s to 3.0 s. Pupil size was then baseline-corrected relative to the period from −0.5 s to 0.0 s and z-score normalized within each epoch. Responses to base tones and target tones were analyzed separately. The first epoch of each block was excluded, as were epochs with an incorrect behavioral response, and epochs beginning less than 2.5 s after a button press.
+Pupil size measurements were time-aligned to the onset of each tone and epoched from −0.5 s to 3.0 s. Pupil size was then baseline-corrected relative to the period from −0.5 s to 0.0 s and z-score normalized within each epoch. The first epoch of each block was excluded, as were epochs with an incorrect behavioral response, and epochs beginning less than 2.5 s after a button press. 
+Responses to base tones and target tones were analyzed separately.
 
 # Results
 Plots of pupil size in response to base tones and wobble tones are shown in Figure 1.
 
-![Caption for figure 1.](fig-placeholder.eps)
+![Mean pupil response across subjects to .](fig-placeholder.eps)
 
 # Discussion
 foo.
