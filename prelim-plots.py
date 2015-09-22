@@ -13,16 +13,19 @@ This script does XXX.
 from os import getcwd
 import os.path as op
 import numpy as np
-from scipy import stats
-from functools import partial
-from mne.stats import spatio_temporal_cluster_1samp_test, ttest_1samp_no_p
 import matplotlib.pyplot as plt
 plt.ioff()
+
+plot_indiv_trials = False
+plot_subj_means = False
+plot_group_analysis = True
 
 
 def box_off(ax):
     ax.get_xaxis().tick_bottom()
     ax.get_yaxis().tick_left()
+    ax.get_xaxis().set_tick_params(which='both', direction='out')
+    ax.get_yaxis().set_tick_params(which='both', direction='out')
     ax.spines['right'].set_color('none')
     ax.spines['top'].set_color('none')
 
@@ -31,63 +34,68 @@ def box_off(ax):
 work_dir = getcwd()
 avg_data_file = op.join(work_dir, 'avg_data.npz')
 all_data_file = op.join(work_dir, 'all_data.npz')
+vd = np.load(avg_data_file)
 ad = np.load(all_data_file)
-subjects = ad['subjects']
-all_data = ad['data']
-t = ad['t']
+subjects, all_data, avg_data, t = (ad['subjects'], ad['data'], vd['data'],
+                                   ad['t'])
 
-# stats setup
-stat_fun = partial(ttest_1samp_no_p, sigma=1e-3)
-thresh = -stats.distributions.t.ppf(q=0.025, df=1)
+# plot
+if plot_indiv_trials:
+    fig, axs = plt.subplots(2, 5, sharex=True, sharey=True, figsize=(16, 9))
+    for jj, (subj, dat) in enumerate(zip(subjects, all_data)):
+        for ii, dat in enumerate(dat):
+            col = ['gray', 'r'][ii]
+            for trial in dat:
+                _ = axs.ravel()[jj].plot(t, trial, color=col, alpha=0.3,
+                                         linewidth=0.5)
+            med = np.median(dat, axis=0)
+            _ = axs.ravel()[jj].plot(t, med, color=col, linewidth=1.5)
+    for ax in axs.ravel():
+        box_off(ax)
+    fig.tight_layout()
+    fig.savefig('all_traces.png')
 
-# plot individual trials
-fig1, axs1 = plt.subplots(2, 5, sharex=True, sharey=True, figsize=(16, 9))
-fig2, axs2 = plt.subplots(1, 2, sharex=True, sharey=True, figsize=(16, 9))
-fig3, axs3 = plt.subplots(2, 5, sharex=True, sharey=True, figsize=(16, 9))
-for jj, (subj, dat) in enumerate(zip(subjects, all_data)):
-    '''
-    # permutation cluster test
-    out = spatio_temporal_cluster_1samp_test(data[:, li][:, :, np.newaxis],
-                                             threshold=thresh,
-                                             stat_fun=stat_fun,
-                                             n_jobs=6, buffer_size=None,
-                                             n_permutations=np.inf)
-    T_obs, clusters, cluster_pv, H0 = out
-    good = np.where(np.array([p <= 0.05 for p in cluster_pv]))[0]
-    cluster_pv = cluster_pv[good]
-    clusters = [clusters[g] for g in good]
-    for clu, pv in zip(clusters, cluster_pv):
-        idx = (np.sign(T_obs[clu[0][0], 0]).astype(int) + 1) // 2
-        clu = clu[0]
-        ymin = 0 * np.ones_like(t[clu])
-        tidx = int(np.mean(clu[[0, -1]]))
-        ymax = data_mean[clu]
-        ax.fill_between(t[clu], ymin, ymax, alpha=0.5,
-                        facecolor='g', linewidth=0)
-    '''
-    for ii, trialtype in enumerate(dat):
+if plot_subj_means:
+    fig, axs = plt.subplots(2, 5, sharex=True, sharey=True, figsize=(16, 9))
+    for jj, (subj, dat) in enumerate(zip(subjects, all_data)):
+        for ii, dat in enumerate(dat):
+            col = ['gray', 'r'][ii]
+            mean = np.mean(dat, axis=0)
+            sd = np.std(dat, axis=0)
+            _ = axs.ravel()[jj].plot(t, mean, color=col, linewidth=1.5)
+            _ = axs.ravel()[jj].fill_between(t, mean+sd, mean-sd, color=col,
+                                             alpha=0.3)
+    for ax in axs.ravel():
+        box_off(ax)
+    fig.tight_layout()
+    fig.savefig('subj_means.png')
 
-        col = ['gray', 'r'][ii]
-        for trial in trialtype:
-            _ = axs1.ravel()[jj].plot(t, trial, color=col, alpha=0.3,
-                                      linewidth=0.5)
-        med = np.median(trialtype, axis=0)
-        mean = np.mean(trialtype, axis=0)
-        sd = np.std(trialtype, axis=0)
-        _ = axs1.ravel()[jj].plot(t, med, color=col, linewidth=1.5)
-        _ = axs3.ravel()[jj].plot(t, mean, color=col, linewidth=1.5)
-        _ = axs3.ravel()[jj].fill_between(t, mean+sd, mean-sd, color=col,
-                                          alpha=0.3)
-        # plot all subjs on one graph
-        _ = axs2[ii].plot(t, med, color=col, linewidth=0.5)
+if plot_group_analysis:
+    fig, axs = plt.subplots(1, 2, sharey=True, figsize=(6.5, 3))
+    across_subj = np.mean(avg_data, axis=0)
+    across_subj_sem = np.std(avg_data, axis=0) / np.sqrt(len(avg_data) - 1)
+    maxs = across_subj.max(axis=-1)
+    idxs = across_subj.argmax(axis=-1)
+    for ii, (dat, sem) in enumerate(zip(across_subj, across_subj_sem)):
+        #col = ['gray', 'r'][ii]
+        col = 'k'
+        _ = axs[ii].fill_between(t, dat-sem, dat+sem, color='0.7')
+        _ = axs[ii].plot(t, dat, color=col, linewidth=1)
+        _ = axs[ii].annotate('t = ' + str(round(t[idxs[ii]], 3)),
+                             xy=(t[idxs[ii]], maxs[ii]), xytext=(0, 12),
+                             textcoords='offset points', ha='center')
+        _ = axs[ii].axhline(0, linestyle=':', color='0.3')
+        _ = axs[ii].axvline(0, linestyle=':', color='0.3')
+        _ = axs[ii].get_xaxis().set_label_text('time (s)')
+    _ = axs[0].get_yaxis().set_label_text('Pupil size (z-score)')
 
-for ax in np.concatenate((axs1.ravel(), axs2)):
-    box_off(ax)
-fig1.tight_layout()
-fig1.savefig('all_traces.png')
+    for ax in axs:
+        box_off(ax)
+    fig.tight_layout()
+    fig.savefig('group_analysis.png')
 
-#plt.ion()
-#plt.show()
+plt.ion()
+plt.show()
 
 
 raise RuntimeError()
