@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 """
 ===============================================================================
-Script ''
+Script 'fig-1.py'
 ===============================================================================
 
-This script does XXX.
+This script reads in pupil tone impulse response data and generates plots of
+pupil diameter for target and non-target tones.
 """
 # @authors: Eric Larson (larsoner@uw.edu)
 #           Dan McCloy  (drmccloy@uw.edu)
@@ -42,6 +43,8 @@ idxs = across_subj.argmax(axis=-1)
 for ii, (dat, sem) in enumerate(zip(across_subj, across_subj_sem)):
     #col = ['gray', 'r'][ii]
     col = 'k'
+    lab = ['a)', 'b)'][ii]
+    labx = [-0.3, -0.15][ii]
     _ = axs[ii].fill_between(t, dat-sem, dat+sem, color='0.7')
     _ = axs[ii].plot(t, dat, color=col, linewidth=1)
     _ = axs[ii].annotate('t = ' + str(round(t[idxs[ii]], 3)),
@@ -50,9 +53,12 @@ for ii, (dat, sem) in enumerate(zip(across_subj, across_subj_sem)):
     _ = axs[ii].axhline(0, linestyle=':', color='0.3')
     _ = axs[ii].axvline(0, linestyle=':', color='0.3')
     _ = axs[ii].get_xaxis().set_label_text('time (s)')
+    _ = axs[ii].text(labx, 1, lab, transform=axs[ii].transAxes,
+                     fontdict=dict(weight='bold'))
 _ = axs[0].get_yaxis().set_label_text('Pupil size (z-score)')
+
 
 for ax in axs:
     box_off(ax)
-fig.tight_layout()
+fig.tight_layout(h_pad=0.3)
 fig.savefig('fig-1.eps')
