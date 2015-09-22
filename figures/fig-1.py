@@ -30,7 +30,6 @@ def box_off(ax):
 # file I/O
 work_dir = '..'
 avg_data_file = op.join(work_dir, 'avg_data.npz')
-all_data_file = op.join(work_dir, 'all_data.npz')
 ad = np.load(avg_data_file)
 subjects, avg_data, t = ad['subjects'], ad['data'], ad['t']
 
@@ -41,12 +40,10 @@ across_subj_sem = np.std(avg_data, axis=0) / np.sqrt(len(avg_data) - 1)
 maxs = across_subj.max(axis=-1)
 idxs = across_subj.argmax(axis=-1)
 for ii, (dat, sem) in enumerate(zip(across_subj, across_subj_sem)):
-    #col = ['gray', 'r'][ii]
-    col = 'k'
     lab = ['a)', 'b)'][ii]
     labx = [-0.3, -0.15][ii]
     _ = axs[ii].fill_between(t, dat-sem, dat+sem, color='0.7')
-    _ = axs[ii].plot(t, dat, color=col, linewidth=1)
+    _ = axs[ii].plot(t, dat, color='k', linewidth=1)
     _ = axs[ii].annotate('t = ' + str(round(t[idxs[ii]], 3)),
                          xy=(t[idxs[ii]], maxs[ii]), xytext=(0, 12),
                          textcoords='offset points', ha='center')
@@ -56,7 +53,6 @@ for ii, (dat, sem) in enumerate(zip(across_subj, across_subj_sem)):
     _ = axs[ii].text(labx, 1, lab, transform=axs[ii].transAxes,
                      fontdict=dict(weight='bold'))
 _ = axs[0].get_yaxis().set_label_text('Pupil size (z-score)')
-
 
 for ax in axs:
     box_off(ax)
