@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 #import numpy as np
 import re
+import sys
 
-infile = './McCloyLeeJASA_submitted.tex'
-outfile = './non_ascii_chars.txt'
+infile = sys.argv[-1]
+outfile = 'nonascii.txt'
 
-with open(infile, 'r') as f:
-	with open(outfile, 'w') as g:
-		for line in f:
-			g.write(re.sub('[\x00-\x7f]', '', line))
-#			for char in line:
-#				if ord(char) > 127:
-#					g.write(char + '\n')
+nonascii = []
+
+with open(infile, 'r') as f, open(outfile, 'w') as g:
+    for line in f:
+        # remove all ASCII chars from line, add what remains to list
+        nonascii.extend(list(re.sub('[\x00-\x7f]', '', line)))
+    g.write(' '.join(set(nonascii)))
