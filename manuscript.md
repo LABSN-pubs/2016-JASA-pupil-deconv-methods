@@ -45,7 +45,7 @@ Pupillometry, the tracking of pupil diameter, has been used to measure attention
 Hoeks and Levelt have empirically estimated the kernel parameters $n$ and $t_{max}$ using both auditory and visual stimuli, but a crucial shortcoming of their study was the fact that button-press responses were involved in all trials used for parameter estimation: non-button-press trials were included in their experimental design, but they report that pupillary responses to these trials were “too small and noisy for further data analysis” [@HoeksLevelt1993]. This is problematic in light of recent findings showing that up to 70% of pupil dilation responses could be attributed to preparatory and motor commands, with pupillary effects beginning as early as 400 ms prior to the button press event [@HupeEtAl2009]. In consequence, an estimate of the latency of response maximum ($t_{max}$) based on trials involving a motor response would be inappropriate for modeling pupillary responses to stimuli absent of motor responses. For this reason, we present our estimates of pupillary response functions to both target (with button press) and non-target (absent of button press) auditory stimuli (Experiment 1), and show how temporal alignment of stimulus and pupillary response can be achieved in an auditory attention switching task (Experiment 2) once an appropriate pupil response function has been estimated.
 
 <!--
-h = t^n^ ∙ e^(−nt/t~max~)^
+h = t^n^ × e^(−nt/t~max~)^
 $h = t^n \times e^{\frac{-nt}{t_{max}}}$
 -->
 
