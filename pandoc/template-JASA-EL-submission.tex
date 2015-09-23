@@ -52,7 +52,10 @@ $endif$
 $if(header)$
 \usepackage{fancyhdr}
 \pagestyle{fancy}
+\lhead{}
+\chead{}
 \rhead{$header$}
+\renewcommand{\headrulewidth}{0pt}
 $endif$
 
 %% %% %% %% %% %% %% %%
@@ -145,7 +148,7 @@ $if(date)$\date{$date$}$else$\date{\today}$endif$
 \doublespacing
 
 $if(title)$\maketitle$if(runningtitle)$\begin{center}Running title: $runningtitle$\end{center}$endif$\newpage$endif$
-$if(abstract)$\begin{abstract}$abstract$\end{abstract}\bigskip\copyright $if(copyrightyear)$$copyrightyear$$endif$ Acoustical Society of America$if(pacs)$\bigskip\bigskip\bigskip PACS Numbers: $for(pacs)$$pacs$$sep$, $endfor$$endif$\newpage$endif$
+$if(abstract)$\begin{abstract}$abstract$\end{abstract}\bigskip\copyright~$if(copyrightyear)$$copyrightyear$~$endif$Acoustical Society of America\newline $if(pacs)$PACS Numbers: $for(pacs)$$pacs$$sep$, $endfor$$endif$\newpage$endif$
 
 $for(include-before)$
 $include-before$
