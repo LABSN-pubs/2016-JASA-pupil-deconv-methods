@@ -18,11 +18,11 @@ sub: bib/pupil-kernel.bib submission.tex pandoc/latex-postprocessor.py linkfig
 	pdflatex McCloyEtAl-pupil-deconvolution.tex
 	pdflatex McCloyEtAl-pupil-deconvolution.tex
 
-submission.tex: manuscript.md pandoc/template-JASA-EL-submission.tex figures/fig-1.eps figures/fig-placeholder.eps
+submission.tex: manuscript.md pandoc/template-JASA-EL-submission.tex figures/fig-1.eps figures/fig-2.eps
 	ln -sf bib/jasa-submission.bst pupil-kernel.bst
 	pandoc --latex-engine=xelatex --natbib --no-tex-ligatures --template=pandoc/template-JASA-EL-submission.tex --output=submission.tex manuscript.md
 
-manuscript.tex: manuscript.md pandoc/template-JASA-EL-manuscript.tex figures/fig-1.eps figures/fig-placeholder.eps
+manuscript.tex: manuscript.md pandoc/template-JASA-EL-manuscript.tex figures/fig-1.eps figures/fig-2.eps
 	ln -sf bib/jasa-manuscript.bst pupil-kernel.bst
 	pandoc --latex-engine=xelatex --natbib --no-tex-ligatures --template=pandoc/template-JASA-EL-manuscript.tex --output=manuscript.tex manuscript.md
 
