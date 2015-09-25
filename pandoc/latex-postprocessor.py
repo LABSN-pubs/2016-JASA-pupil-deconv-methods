@@ -44,6 +44,7 @@ with open(infile, 'r') as f, open(outfile, 'w') as g:
             line = line.replace('“', '``')  # double quote left
             line = line.replace('”', '\'\'')  # double quote right
             line = line.replace('’', '\'')  # single quote right / apostrophe
+            line = line.replace('–', '\\textendash{}')
         else:
             ## web version uses PDFs instead of EPS (avoid bug in ps2pdf)
             #line = line.replace('.eps', '.pdf')
