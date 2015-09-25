@@ -89,7 +89,7 @@ Spectral degradation of the letters followed conventional vocoding strategy to s
 ### Procedure
 Participants were instructed to maintain their gaze on a white fixation dot centered on a black screen throughout test blocks. Each trial began with a 1 s auditory cue (spoken letters “AA” or “AB”) indicating (by the pitch of the talker’s voice) whether to attend first to the male or female voice, and additionally indicating whether to maintain attention to that talker throughout the trial (“AA” cue) or to switch attention to the other talker at the mid-trial gap (“AB” cue). The cue was followed by 0.5 s of silence, followed by the main portion of the trial: two concurrent 4-letter streams (one male voice, one female voice), with a variable-duration gap between the second and third letters. The task was to respond by button press to the letter “O” spoken by the target talker (Figure 2). The letter “O” never occurred simultaneously in the two streams.
 
-![Diagram of trial structure.](fig-2.eps)
+![Illustration of switch versus maintain trials in Experiment 2. In a “switch” trial (heavy dashed line), the participant would hear cue “AB” in a male voice, attend to the male voice (“EO”) for the first half of the trial and the female voice (“EU”) for the second half of the trial, and press the button once (for the “O” occurring at 2–2.5 s). In a “maintain” trial (heavy solid line), the participant would hear cue “AA” in a male voice, attend to the male voice (“EOPO”) throughout the trial, and press the button twice (once for each “O”).](fig-2.eps)
 
 ## Results & Discussion
 
