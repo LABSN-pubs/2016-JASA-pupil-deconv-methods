@@ -6,7 +6,7 @@ Script 'fig-2.py'
 
 This script plots a trial diagram for the pupil vocode switching task.
 """
-# @author: Dan McCloy  (drmccloy@uw.edu)
+# @author: Dan McCloy (drmccloy@uw.edu)
 # Created on Wed Sep 23 16:57:41 2015
 # License: BSD (3-clause)
 
