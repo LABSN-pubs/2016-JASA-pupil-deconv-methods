@@ -13,7 +13,10 @@ This script plots a trial diagram for the pupil vocode switching task.
 
 from numpy import linspace
 import matplotlib.pyplot as plt
+from convenience_functions import use_font
+
 plt.ioff()
+use_font('source')
 
 # set up figure
 fig = plt.figure(figsize=(6.5, 2.25))
