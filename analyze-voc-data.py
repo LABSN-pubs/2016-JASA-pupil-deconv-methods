@@ -167,23 +167,29 @@ for subj in subjects:
     signal_samp = np.round(
         zscores_structured.shape[-1] * fs_out / float(fs)).astype(int)
     kernel_samp = np.round(kernel.shape[-1] * fs_out / float(fs)).astype(int)
-    zscore_lowpass, t_lowpass = ss.resample(zscores_structured, signal_samp,
-                                            t=epochs.times, axis=-1)
+    zscores_lowpass, t_lowpass = ss.resample(zscores_structured, signal_samp,
+                                             t=epochs.times, axis=-1)
     kernel_lowpass = ss.resample(kernel, kernel_samp)
+    # zero padding
+    zeropad = np.zeros(zscores_lowpass.shape[:-1] + (kernel_samp,))
+    zscores_zeropadded = np.c_[zeropad, zscores_lowpass, zeropad]
     print('  Continuous deconvolution...')
-    len_deconv = signal_samp - kernel_samp + 1
-    t_cont = t_lowpass[:len_deconv]
-    fit_continuous_deconv = np.empty(zscore_lowpass.shape[:-1] + (len_deconv,))
+    len_deconv = zscores_zeropadded.shape[-1] - kernel_samp + 1
+    t_cont = t_lowpass[:len_deconv - 2 * kernel_samp]  # don't zeropad here
+    fit_continuous_deconv = np.empty(zscores_zeropadded.shape[:-1] +
+                                     (len_deconv,))
     fit_continuous_deconv[:] = np.inf
-    for _trial in range(zscore_lowpass.shape[0]):
-        for _gap in range(zscore_lowpass.shape[1]):  # maintain/switch
-            for _attn in range(zscore_lowpass.shape[2]):
-                for _band in range(zscore_lowpass.shape[3]):
-                    signal = zscore_lowpass[_trial, _gap, _attn, _band, :]
+    for _trial in range(zscores_zeropadded.shape[0]):
+        for _gap in range(zscores_zeropadded.shape[1]):  # maintain/switch
+            for _attn in range(zscores_zeropadded.shape[2]):
+                for _band in range(zscores_zeropadded.shape[3]):
+                    signal = zscores_zeropadded[_trial, _gap, _attn, _band, :]
                     (fit_continuous_deconv[_trial, _gap, _attn, _band, :],
                      _) = ss.deconvolve(signal, kernel_lowpass)
     assert not np.any(fit_continuous_deconv == np.inf)
-
+    # remove zero padding
+    fit_continuous_deconv = fit_continuous_deconv[:, :, :, :,
+                                                  kernel_samp:-kernel_samp]
     # finish subject
     fits.append(fits_structured)
     zscores.append(zscores_structured)
