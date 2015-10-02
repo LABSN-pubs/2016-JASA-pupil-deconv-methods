@@ -92,6 +92,10 @@ Participants were instructed to maintain their gaze on a white fixation dot cent
 ![Illustration of switch versus maintain trials in Experiment 2. In a “switch” trial (heavy dashed line), the participant would hear cue “AB” in a male voice, attend to the male voice (“EO”) for the first half of the trial and the female voice (“EU”) for the second half of the trial, and press the button once (for the “O” occurring at 2–2.5 s). In a “maintain” trial (heavy solid line), the participant would hear cue “AA” in a male voice, attend to the male voice (“EOPO”) throughout the trial, and press the button twice (once for each “O”).](fig-2.eps)
 
 ## Results & Discussion
+foo.
+
+![Comparison of raw pupil size measurement versus deconvolved signal. (a) Mean (± 1 standard error of the mean) pupil size across subjects. XXX TODO UNFINISHED XXX.](fig-3.eps)
+
 
 # General Discussion
 
