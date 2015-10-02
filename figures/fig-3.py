@@ -13,18 +13,21 @@ This script plots pupil size in various conditions.
 import os.path as op
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.colors import colorConverter as cc
 from scipy.stats import distributions
 from mne.stats import spatio_temporal_cluster_1samp_test, ttest_1samp_no_p
-from convenience_functions import box_off, use_font
+from convenience_functions import box_off, use_font, tick_label_size
 from functools import partial
 
 plt.ioff()
-use_font('mplus')
+use_font('source')
+tick_label_size(10)
 
 # flags
 plot_stderr = True
-plot_signif = True
-savefig = False
+plot_signif = False
+show_pval = False
+savefig = True
 
 # file I/O
 work_dir = '..'
@@ -41,11 +44,14 @@ subj  trials   200/600gap  maint/switch  10/20chan  samples
 
 # params
 stim_times = np.array([0, 0.5, 1.5, 2.0, 2.5, 3.0])  # gap not included (yet)
-stim_dur = 0.5
+stim_dur = 0.48
 gap_dur = [0.2, 0.6]
 t_min, t_max = -0.5, 6.05
 t_zs = t_min + np.arange(data_zscore.shape[-1]) / float(fs)
 stat_fun = partial(ttest_1samp_no_p, sigma=1e-3)
+
+# colors
+cue, msk, blu, red = '0.6', '0.75', '#4477aa', '#cc6677'
 
 # set up figure
 fig, axs = plt.subplots(1, 2, figsize=(6.5, 3))
@@ -61,6 +67,7 @@ for ii, (t, data) in enumerate(zip([t_zs, t_fit], [data_zscore, data_deconv])):
     # axis limits
     ymax = np.ceil(np.max(np.mean(np.nanmean(data, axis=1), axis=0)))
     ylim = [-0.4 * ymax, ymax]
+    # use space near bottom for stim timecourse diagram
     stim_ymin = ymax * -0.3
     stim_ymid = ymax * -0.25
     stim_ymax = ymax * -0.2
@@ -72,47 +79,38 @@ for ii, (t, data) in enumerate(zip([t_zs, t_fit], [data_zscore, data_deconv])):
         contr_mean = np.mean(contrast, axis=0)
         # plot curves
         for kk, (cond, se) in enumerate(zip(contr_mean, contr_std)):
-            col = ['#4477aa', '#cc6677'][kk]
-            lsty = ['-', '-'][kk]
-            _ = axs[ii].plot(t, cond, color=col, linestyle=lsty,
-                             linewidth=1.5, zorder=3)
+            col = [blu, red][kk]
+            tcol = cc.to_rgb(col) + (0.4,)
+            zord, zoff = [2, 0][kk], [1, 0][kk]
             # plot standard error bands
             if plot_stderr:
-                _ = axs[ii].fill_between(t, cond - se, cond + se, color=col,
-                                         linewidth=0, alpha=0.4, zorder=2)
-            # set axis limits
-            _ = axs[ii].set_ylim(*ylim)
-            _ = axs[ii].set_xlim(*xlim)
-            # draw trial timecourse
-            offset = ymax * [-0.08, 0.03][kk]
-            # different gaps
-            for tt in stim_times[-2:] + gap_dur[kk]:
+                _ = axs[ii].fill_between(t, cond - se, cond + se, color=tcol,
+                                         edgecolor='none', zorder=zoff + 1)
+            # plot mean lines
+            _ = axs[ii].plot(t, cond, color=col, linewidth=1.5,
+                             zorder=zoff + 3)
+            # TRIAL TIMECOURSE
+            thk = 0.01 * ymax
+            off = 0.03 * ymax
+            stim_y = [stim_ymax, stim_ymin][kk]
+            stim_c = [cue] * 4 + [col] * 2
+            stim_t = stim_times + np.array([0] * 4 + [gap_dur[kk]] * 2)
+            # cue and attended stims
+            for tt, cl in zip(stim_t, stim_c):
                 stim_x = (tt, tt + stim_dur)
-                _ = axs[ii].fill_between(stim_x, stim_ymid + offset,
-                                         stim_ymax + offset,
-                                         color=col, edgecolor='w',
-                                         linewidth=0.5, zorder=10)
-                _ = axs[ii].fill_between(stim_x, stim_ymin + offset,
-                                         stim_ymid + offset,
-                                         color='0.8', edgecolor='w',
-                                         linewidth=0.5, zorder=10)
-        # pre-gap letters
-        for tt in stim_times[2:-2]:
-            stim_x = (tt, tt + stim_dur)
-            # target
-            _ = axs[ii].fill_between(stim_x, stim_ymid, stim_ymax, color='0.5',
-                                     edgecolor='w', linewidth=0.5, zorder=10)
-            # masker
-            _ = axs[ii].fill_between(stim_x, stim_ymin, stim_ymid, color='0.8',
-                                     edgecolor='w', linewidth=0.5, zorder=10)
-        # cue
-        for tt in stim_times[:2]:
-            stim_x = (tt, tt + stim_dur)
-            _ = axs[ii].fill_between(stim_x, stim_ymid, stim_ymax, color='0.5',
-                                     edgecolor='w', linewidth=0.5, zorder=10)
-        _ = axs[ii].annotate('cue', xy=(stim_times[1], stim_ymid),
-                             xytext=(0, -3), textcoords='offset points',
-                             fontsize=10, ha='center', va='top')
+                _ = axs[ii].fill_between(stim_x, stim_y+thk, stim_y-thk,
+                                         color=cl, edgecolor='none', zorder=9)
+            # masker stims
+            for tt in stim_t[2:]:
+                stim_x = (tt, tt + stim_dur)
+                _ = axs[ii].fill_between(stim_x, stim_y+thk-off,
+                                         stim_y-thk-off, color=msk,
+                                         edgecolor='none', zorder=9)
+            '''
+            _ = axs[ii].annotate('cue', xy=(stim_times[1], stim_ymid),
+                                 xytext=(0, -3), textcoords='offset points',
+                                 fontsize=10, ha='center', va='top', color=cue)
+            '''
         # stats
         if plot_signif:
             thresh = -1 * distributions.t.ppf(0.05 / 2, len(contr_diff) - 1)
@@ -137,12 +135,23 @@ for ii, (t, data) in enumerate(zip([t_zs, t_fit], [data_zscore, data_deconv])):
                 pval_x = t[int(np.mean(clu[[0, -1]]))]
                 pval_y = -0.1 * ylim[1]
                 pval_ord = np.trunc(np.log10(pv)).astype(int)
-                pval_txt = '$p < 10^{{{}}}$'.format(pval_ord)
                 _ = axs[ii].fill_between(t[clu], cluster_ymin, cluster_ymax,
                                          alpha=1, facecolor='0.9', linewidth=1,
-                                         zorder=1, hatch='//', edgecolor='w')
-                _ = axs[ii].text(pval_x, pval_y, pval_txt, ha='center',
-                                 va='baseline', fontdict=dict(size=10))
+                                         zorder=zoff + 2, hatch='//',
+                                         edgecolor='w')
+                if show_pval:
+                    pval_txt = '$p < 10^{{{}}}$'.format(pval_ord)
+                    _ = axs[ii].text(pval_x, pval_y, pval_txt, ha='center',
+                                     va='baseline', fontdict=dict(size=10))
+    # set axis limits
+    _ = axs[ii].set_ylim(*ylim)
+    _ = axs[ii].set_xlim(*xlim)
+    # remove yaxis / ticks / ticklabels near bottom
+    ytck = [-0.1 * ymax, ymax]
+    ytl = axs[ii].yaxis.get_ticklocs()
+    _ = axs[ii].spines['left'].set_bounds(*ytck)
+    _ = axs[ii].yaxis.set_ticks(ytl[ytl > ytck[0]])
+    _ = axs[ii].set_ylim(*ylim)  # have to do this twice
     # annotations
     xl = 'Time (s)'
     yl = ['Pupil size (z-score)', 'Effort (AU)'][ii]
@@ -154,7 +163,7 @@ for ax in axs.ravel():
 fig.tight_layout()
 
 if savefig:
-    fig.savefig('fig-3.eps')
+    fig.savefig('fig-3.pdf')
 else:
     plt.ion()
     plt.show()
