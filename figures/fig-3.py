@@ -25,7 +25,7 @@ tick_label_size(10)
 
 # flags
 plot_stderr = True
-plot_signif = False
+plot_signif = True
 show_pval = False
 savefig = True
 
@@ -85,10 +85,10 @@ for ii, (t, data) in enumerate(zip([t_zs, t_fit], [data_zscore, data_deconv])):
             # plot standard error bands
             if plot_stderr:
                 _ = axs[ii].fill_between(t, cond - se, cond + se, color=tcol,
-                                         edgecolor='none', zorder=zoff + 1)
+                                         edgecolor='none', zorder=zoff + 2)
             # plot mean lines
             _ = axs[ii].plot(t, cond, color=col, linewidth=1.5,
-                             zorder=zoff + 3)
+                             zorder=zoff + 4)
             # TRIAL TIMECOURSE
             thk = 0.01 * ymax
             off = 0.03 * ymax
@@ -106,6 +106,12 @@ for ii, (t, data) in enumerate(zip([t_zs, t_fit], [data_zscore, data_deconv])):
                 _ = axs[ii].fill_between(stim_x, stim_y+thk-off,
                                          stim_y-thk-off, color=msk,
                                          edgecolor='none', zorder=9)
+            # timecourse labels
+            lab = ['short gap', 'long gap'][kk]
+            _ = axs[ii].annotate(lab, (0, stim_y), xytext=(-6, 0),
+                                 textcoords='offset points', color=col,
+                                 ha='right', va='center', fontsize=8,
+                                 fontstyle='italic')
             '''
             _ = axs[ii].annotate('cue', xy=(stim_times[1], stim_ymid),
                                  xytext=(0, -3), textcoords='offset points',
@@ -136,9 +142,8 @@ for ii, (t, data) in enumerate(zip([t_zs, t_fit], [data_zscore, data_deconv])):
                 pval_y = -0.1 * ylim[1]
                 pval_ord = np.trunc(np.log10(pv)).astype(int)
                 _ = axs[ii].fill_between(t[clu], cluster_ymin, cluster_ymax,
-                                         alpha=1, facecolor='0.9', linewidth=1,
-                                         zorder=zoff + 2, hatch='//',
-                                         edgecolor='w')
+                                         alpha=1, facecolor='0.9', zorder=1,
+                                         edgecolor='none')
                 if show_pval:
                     pval_txt = '$p < 10^{{{}}}$'.format(pval_ord)
                     _ = axs[ii].text(pval_x, pval_y, pval_txt, ha='center',
@@ -152,11 +157,16 @@ for ii, (t, data) in enumerate(zip([t_zs, t_fit], [data_zscore, data_deconv])):
     _ = axs[ii].spines['left'].set_bounds(*ytck)
     _ = axs[ii].yaxis.set_ticks(ytl[ytl > ytck[0]])
     _ = axs[ii].set_ylim(*ylim)  # have to do this twice
+    # subplot labels
+    lab = ['a)', 'b)'][ii]
+    labx = [-0.22, -0.18][ii]
+    _ = axs[ii].text(labx, 1, lab, transform=axs[ii].transAxes,
+                     fontdict=dict(weight='bold'))
     # annotations
     xl = 'Time (s)'
     yl = ['Pupil size (z-score)', 'Effort (AU)'][ii]
     _ = axs[ii].set_xlabel(xl)
-    _ = axs[ii].set_ylabel(yl)
+    _ = axs[ii].set_ylabel(yl, y=0.5 + 0.15 / 1.4)
 
 for ax in axs.ravel():
     box_off(ax)
