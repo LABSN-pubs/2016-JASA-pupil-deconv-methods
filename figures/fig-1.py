@@ -16,8 +16,10 @@ import numpy as np
 import os.path as op
 import matplotlib.pyplot as plt
 from pyeparse.utils import pupil_kernel
-from convenience_functions import box_off
+from convenience_functions import box_off, use_font
+
 plt.ioff()
+use_font('source')
 
 # flags
 plot_kernel = True
