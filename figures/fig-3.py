@@ -51,7 +51,7 @@ t_zs = t_min + np.arange(data_zscore.shape[-1]) / float(fs)
 stat_fun = partial(ttest_1samp_no_p, sigma=1e-3)
 
 # colors
-cue, msk, blu, red = '0.6', '0.75', '#4477aa', '#cc6677'
+cue, msk, blu, red = '0.5', '0.8', '#332288', '#cc6677'
 
 # set up figure
 fig, axs = plt.subplots(1, 2, figsize=(6.5, 3))
@@ -69,7 +69,6 @@ for ii, (t, data) in enumerate(zip([t_zs, t_fit], [data_zscore, data_deconv])):
     ylim = [-0.4 * ymax, ymax]
     # use space near bottom for stim timecourse diagram
     stim_ymin = ymax * -0.3
-    stim_ymid = ymax * -0.25
     stim_ymax = ymax * -0.2
     for contrast in [gap_200_vs_600]:  # maint_vs_switch, chan_10_vs_20
         # within-subject difference between conditions
@@ -81,19 +80,19 @@ for ii, (t, data) in enumerate(zip([t_zs, t_fit], [data_zscore, data_deconv])):
         for kk, (cond, se) in enumerate(zip(contr_mean, contr_std)):
             col = [blu, red][kk]
             tcol = cc.to_rgb(col) + (0.4,)
-            zord, zoff = [2, 0][kk], [1, 0][kk]
+            zord = [2, 0][kk]
             # plot standard error bands
             if plot_stderr:
                 _ = axs[ii].fill_between(t, cond - se, cond + se, color=tcol,
-                                         edgecolor='none', zorder=zoff + 2)
+                                         edgecolor='none', zorder=zord + 2)
             # plot mean lines
             _ = axs[ii].plot(t, cond, color=col, linewidth=1.5,
-                             zorder=zoff + 4)
+                             zorder=zord + 3)
             # TRIAL TIMECOURSE
             thk = 0.01 * ymax
             off = 0.03 * ymax
             stim_y = [stim_ymax, stim_ymin][kk]
-            stim_c = [cue] * 4 + [col] * 2
+            stim_c = [cue] * 2 + [col] * 4
             stim_t = stim_times + np.array([0] * 4 + [gap_dur[kk]] * 2)
             # cue and attended stims
             for tt, cl in zip(stim_t, stim_c):
@@ -110,13 +109,13 @@ for ii, (t, data) in enumerate(zip([t_zs, t_fit], [data_zscore, data_deconv])):
             lab = ['short gap', 'long gap'][kk]
             _ = axs[ii].annotate(lab, (0, stim_y), xytext=(-6, 0),
                                  textcoords='offset points', color=col,
-                                 ha='right', va='center', fontsize=8,
+                                 ha='right', va='center', fontsize=9,
                                  fontstyle='italic')
-            '''
-            _ = axs[ii].annotate('cue', xy=(stim_times[1], stim_ymid),
-                                 xytext=(0, -3), textcoords='offset points',
-                                 fontsize=10, ha='center', va='top', color=cue)
-            '''
+        # cue label
+        _ = axs[ii].annotate('cue', xy=(stim_times[1], stim_ymax + thk),
+                             xytext=(0, 2), textcoords='offset points',
+                             fontsize=9, fontstyle='italic', ha='center',
+                             va='bottom', color=cue)
         # stats
         if plot_signif:
             thresh = -1 * distributions.t.ppf(0.05 / 2, len(contr_diff) - 1)
@@ -167,6 +166,10 @@ for ii, (t, data) in enumerate(zip([t_zs, t_fit], [data_zscore, data_deconv])):
     yl = ['Pupil size (z-score)', 'Effort (AU)'][ii]
     _ = axs[ii].set_xlabel(xl)
     _ = axs[ii].set_ylabel(yl, y=0.5 + 0.15 / 1.4)
+# arrow
+dy = 0.03 * ymax
+_ = axs[-1].arrow(t[clu][0], -dy, 0, -3*dy, head_width=0.1, head_length=dy,
+                  fc='k', ec='k')
 
 for ax in axs.ravel():
     box_off(ax)
