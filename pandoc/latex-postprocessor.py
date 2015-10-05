@@ -47,6 +47,5 @@ with open(infile, 'r') as f, open(outfile, 'w') as g:
             line = line.replace('–', '\\textendash{}')
         else:
             ## web version uses PDFs instead of EPS (avoid bug in ps2pdf)
-            #line = line.replace('.eps', '.pdf')
-            pass
+            line = line.replace('.eps', '.pdf')
         g.write(line)
