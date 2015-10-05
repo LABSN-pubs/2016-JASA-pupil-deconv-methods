@@ -29,7 +29,7 @@ gapcol = '#999933'
 malecol = '0.6'
 femalecol = '0.75'
 cuecol = 'w'
-maintcol = '#332288'
+maintcol = '#117733'  # '#332288'
 switchcol = '#aa4499'  # '#44aa99'
 lettercol = 'w'
 slashcol = 'k'
@@ -100,4 +100,4 @@ plt.annotate('time (s)', (arr_xmax, arr_y),  xytext=(3, 0), fontsize=9,
 # finalize
 plt.ylim(-2.8, 4.8)
 plt.xlim(-0.1, 5)
-fig.savefig('fig-2.eps')
+fig.savefig('fig-2.pdf')
