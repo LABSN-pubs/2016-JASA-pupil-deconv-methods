@@ -71,7 +71,7 @@ Pupil size measurements were time-aligned to the onset of each tone and epoched 
 ## Results & Discussion
 Plots of pupil size in response to steady tones and wobble tones are shown in Figure 1. Pupillary response to steady tones shows a peak around 0.5 s after stimulus onset, whereas response to wobble tones shows an early peak around 0.75 s and a larger, later peak around 1.4 s after stimulus onset. Differences in both magnitude and peak latency can be attributed to the behavioral response (button press) in the wobble tone trials [recall that when button press responses occur, up to 70% of the pupillary response is attributable to button presses; @HupeEtAl2009].
 
-![Mean (± 1 standard error of the mean) pupil size across subjects in response to (a) steady tones and (b) wobble tones, with latency of maximum response labeled. The late peak for wobble tones is attributable to the behavioral response (button press) in those trials. Dark dotted lines show deconvolution kernels calculated from the different maximum response latencies.](fig-1.eps)
+![Mean (± 1 SEM) pupil size across subjects in response to (a) steady tones and (b) wobble tones, with latency of maximum response labeled. The late peak for wobble tones is attributable to the behavioral response (button press) in those trials. Dark dotted lines show deconvolution kernels calculated from the different maximum response latencies.](fig-1.eps)
 
 Given the simplicity of the stimulus design in this experiment, we can suppose that the latency of the maximum pupillary response $t_{max}$ in the non-target condition (about 500 ms; Figure 1a) represents the minimum possible latency for a pupillary change resulting from an auditory stimulus. In contrast, the larger value of $t_{max}$ derived by Hoeks and Levelt [-@HoeksLevelt1993] and subsequently used by Weirda and colleagues [-@WeirdaEtAl2012] likely reflects contributions to pupil dilation resulting from motor planning and motor command activities. As such, our estimate of $t_{max}$ should yield a more appropriate deconvolution kernel for experiments in which pupil dilation is hypothesized to primarily reflect stimulus-driven aspects attentional effort.
 
@@ -91,10 +91,18 @@ Participants were instructed to maintain their gaze on a white fixation dot cent
 
 ![Illustration of switch versus maintain trials in Experiment 2. In a “switch” trial (heavy dashed line), the participant would hear cue “AB” in a male voice, attend to the male voice (“EO”) for the first half of the trial and the female voice (“EU”) for the second half of the trial, and press the button once (for the “O” occurring at 2–2.5 s). In a “maintain” trial (heavy solid line), the participant would hear cue “AA” in a male voice, attend to the male voice (“EOPO”) throughout the trial, and press the button twice (once for each “O”).](fig-2.eps)
 
+### Analysis
+Comparison of pupil dilation time series was performed using a non-parametric cluster-level one-sample T-test on the within-subject differences between experimental conditions [@MarisOostenveld2007], as implemented in `mne-python` [@GramfortEtAl2014].
+
 ## Results & Discussion
 foo.
 
-![Comparison of raw pupil size measurement versus deconvolved signal. (a) Mean (± 1 standard error of the mean) pupil size across subjects. XXX TODO UNFINISHED XXX.](fig-3.eps)
+![Comparison of raw pupil size measurement versus deconvolved signal for the short gap (200 ms) versus long gap (600 ms) trials. (a) Mean (± 1 SEM) measured pupil size across subjects. (b) Mean (± 1 SEM) deconvolved pupil size across subjects. Both analyses show the same overall pattern of statistically significant differences, but in (b) the divergence of the time series shows better temporal alignment to differences in the stimuli (small arrow).](fig-3.eps)
+
+foo.
+
+![Comparison of raw pupil size measurement versus deconvolved signal for maintain versus switch trials. (a) Mean (± 1 SEM) measured pupil size across subjects. (b) Mean (± 1 SEM) deconvolved pupil size across subjects. Both analyses show the same overall pattern of statistically significant differences, but in (b) the divergence of the time series aligns to the end of the cue: the point in the trial where trial type information is available (small arrow).](fig-4.eps)
+
 
 
 # General Discussion
