@@ -56,7 +56,7 @@ for ii, (dat, sem) in enumerate(zip(across_subj, across_subj_sem)):
                          ha='center')
     _ = axs[ii].axhline(0, color='0.8', linewidth=0.5, zorder=1)
     _ = axs[ii].axvline(0, color='0.8', linewidth=0.5, zorder=1)
-    _ = axs[ii].get_xaxis().set_label_text('time (s)')
+    _ = axs[ii].get_xaxis().set_label_text('Time (s)')
     _ = axs[ii].text(labx, 1, lab, transform=axs[ii].transAxes,
                      fontdict=dict(weight='bold'))
 _ = axs[0].get_yaxis().set_label_text('Pupil size (z-score)')
@@ -67,7 +67,7 @@ for ax in axs:
 fig.tight_layout(h_pad=0.3)
 
 if savefig:
-    fig.savefig('fig-1.eps')
+    fig.savefig('fig-1.pdf')
 else:
     plt.ion()
     plt.show()
