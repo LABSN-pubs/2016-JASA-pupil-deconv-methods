@@ -45,27 +45,26 @@ def tick_label_size(size=10):
     rcParams['ytick.labelsize'] = size
 
 
-def box_off(ax):
+def box_off(ax, spines=['top', 'right']):
     # ax should be a matplotlib.axes.AxesSubplot object
     ax.get_xaxis().tick_bottom()
     ax.get_yaxis().tick_left()
     ax.tick_params(axis='both', which='both', direction='out')
     ax.tick_params('both', which='major', length=3, pad=2)
-    ax.spines['right'].set_color('none')
-    ax.spines['top'].set_color('none')
+    for spine in spines:
+        ax.spines[spine].set_color('none')
 
 
 def hatch_between(ax, n, x, y1, y2=0, **kwargs):
-    xx = ax.get_xbound()
-    yy = ax.get_ybound()
+    aspect = ax.figbox.height / ax.figbox.width
+    xx, yy = ax.get_xbound(), ax.get_ybound()
     xx = linspace(xx[0], 2 * xx[1], 2 * n)
-    yy = linspace(yy[0], 2 * yy[1], 2 * n)
+    yy = linspace(yy[0], 2 * yy[1], 2 * n) / aspect
+
     mask = ax.fill_between(x, y1, y2)
     mask.set_visible(False)
     path = mask.get_paths()[0]
     tran = mask.get_transform()
-    for xe, ys in zip(xx[1:], yy[1:]):
-        xs = xx[0]
-        ye = yy[0]
-        lines = ax.plot((xs, xe), (ys, ye), **kwargs)
+    for x2, y1 in zip(xx[1:], yy[1:]):
+        lines = ax.plot((xx[0], x2), (y1, yy[0]), **kwargs)
         lines[0].set_clip_path(path, tran)
