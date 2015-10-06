@@ -1,8 +1,10 @@
-all: web sub cleanweb cleansub
+all: web sub
+web: makeweb cleanweb
+sub: makesub cleansub
 
 .PHONY: linkeps linkpdf cleanweb cleansub cleanall
 
-web: bib/pupil-kernel.bib manuscript.tex linkpdf
+makeweb: bib/pupil-kernel.bib manuscript.tex linkpdf
 	python pandoc/latex-postprocessor.py manuscript.tex McCloyEtAl-pupil-deconvolution-manuscript.tex
 	xelatex McCloyEtAl-pupil-deconvolution-manuscript.tex
 	bibtex8 McCloyEtAl-pupil-deconvolution-manuscript.aux
@@ -10,7 +12,7 @@ web: bib/pupil-kernel.bib manuscript.tex linkpdf
 	xelatex McCloyEtAl-pupil-deconvolution-manuscript.tex
 	xelatex McCloyEtAl-pupil-deconvolution-manuscript.tex
 
-sub: bib/pupil-kernel.bib submission.tex pandoc/latex-postprocessor.py linkeps
+makesub: bib/pupil-kernel.bib submission.tex pandoc/latex-postprocessor.py linkeps
 	python pandoc/latex-postprocessor.py -s submission.tex McCloyEtAl-pupil-deconvolution.tex
 	pdflatex McCloyEtAl-pupil-deconvolution.tex
 	bibtex8 McCloyEtAl-pupil-deconvolution.aux
@@ -26,14 +28,11 @@ manuscript.tex: manuscript.md pandoc/template-JASA-EL-manuscript.tex figures/fig
 	ln -sf bib/jasa-manuscript.bst pupil-kernel.bst
 	pandoc --latex-engine=xelatex --natbib --no-tex-ligatures --template=pandoc/template-JASA-EL-manuscript.tex --output=manuscript.tex manuscript.md
 
-figures/fig-%.eps: figures/fig-%.py
-	cd $(<D); python $(<F)
-
 figures/fig-%.pdf: figures/fig-%.py
 	cd $(<D); python $(<F)
 
 linkeps:
-	for fig in $(FIGS); do ln -sf "$$fig"; done
+	for fig in $(EPSFIGS); do ln -sf "$$fig"; done
 
 linkpdf:
 	for fig in $(PDFFIGS); do ln -sf "$$fig"; done
@@ -46,10 +45,10 @@ cleansub:
 	rm -f *.tex *.eps *-eps-converted-to.pdf nonascii.txt pupil-kernel.bst
 	bn="McCloyEtAl-pupil-deconvolution"; for ext in $(EXTS); do rm -f "$$bn.$$ext"; done
 
-cleanall: cleanweb cleansub
-	rm -f McCloyEtAl-pupil-deconvolution.pdf McCloyEtAl-pupil-deconvolution-manuscript.pdf $(FIGS) $(PDFFIGS)
+clean: cleanweb cleansub
+	rm -f McCloyEtAl-pupil-deconvolution.pdf McCloyEtAl-pupil-deconvolution-manuscript.pdf $(EPSFIGS) $(PDFFIGS)
 
-FIGS = figures/*.eps
+EPSFIGS = figures/*.eps
 
 PDFFIGS = figures/*.pdf
 
