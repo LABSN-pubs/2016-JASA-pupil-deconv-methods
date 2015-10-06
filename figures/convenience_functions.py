@@ -11,11 +11,12 @@ This script defines convenience functions for use with matplotlib.
 # License: BSD (3-clause)
 
 from matplotlib import rcParams
+from numpy import linspace
 
 
 def use_font(font):
     font = font.lower()
-    if font.lower() == 'stix':
+    if font == 'stix':
         rcParams['font.family'] = 'STIXGeneral'
         rcParams['mathtext.fontset'] = 'stix'
     elif font == 'mplus':
@@ -23,21 +24,19 @@ def use_font(font):
         rcParams['font.family'] = 'M+ 1c'
         rcParams['mathtext.fontset'] = 'custom'
         rcParams['mathtext.rm'] = 'M+ 1c'
-        rcParams['mathtext.it'] = 'M+ 1c:medium'
         rcParams['mathtext.bf'] = 'M+ 1c:bold'
+        rcParams['mathtext.it'] = 'M+ 1c:medium'
+        rcParams['mathtext.tt'] = 'M+ 1m'
     elif font == 'source':
         # extralight light regular semibold bold black
         rcParams['font.family'] = 'Source Sans Pro'
         rcParams['mathtext.fontset'] = 'custom'
-        #rcParams['mathtext.default'] = 'Source Sans Pro'
         rcParams['mathtext.rm'] = 'Source Sans Pro'
-        #rcParams['mathtext.sf'] = 'Source Code Pro'
-        #rcParams['mathtext.tt'] = 'Source Code Pro'
-        rcParams['mathtext.it'] = 'Source Sans Pro:italic'
-        #rcParams['mathtext.cal'] = 'Source Sans Pro:italic'
         rcParams['mathtext.bf'] = 'Source Sans Pro:bold'
+        rcParams['mathtext.it'] = 'Source Sans Pro:italic'
+        rcParams['mathtext.tt'] = 'Source Code Pro'
     else:
-        msg = 'You asked for font {} but it\'s not implemented; using default.'
+        msg = 'You asked for font {} but it\'s not implemented.'
         raise NotImplementedError(msg)
 
 
@@ -50,12 +49,23 @@ def box_off(ax):
     # ax should be a matplotlib.axes.AxesSubplot object
     ax.get_xaxis().tick_bottom()
     ax.get_yaxis().tick_left()
-    ax.get_xaxis().set_tick_params(which='both', direction='out')
-    ax.get_yaxis().set_tick_params(which='both', direction='out')
+    ax.tick_params(axis='both', which='both', direction='out')
+    ax.tick_params('both', which='major', length=3, pad=2)
     ax.spines['right'].set_color('none')
     ax.spines['top'].set_color('none')
 
 
-def fill_hatched(ax, **kwargs):
-    #ax.fill_between()
-    pass
+def hatch_between(ax, n, x, y1, y2=0, **kwargs):
+    xx = ax.get_xbound()
+    yy = ax.get_ybound()
+    xx = linspace(xx[0], 2 * xx[1], 2 * n)
+    yy = linspace(yy[0], 2 * yy[1], 2 * n)
+    mask = ax.fill_between(x, y1, y2)
+    mask.set_visible(False)
+    path = mask.get_paths()[0]
+    tran = mask.get_transform()
+    for xe, ys in zip(xx[1:], yy[1:]):
+        xs = xx[0]
+        ye = yy[0]
+        lines = ax.plot((xs, xe), (ys, ye), **kwargs)
+        lines[0].set_clip_path(path, tran)
