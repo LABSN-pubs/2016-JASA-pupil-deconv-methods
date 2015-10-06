@@ -48,19 +48,26 @@ subj  trials   200/600gap  maint/switch  10/20chan  samples
 stim_times = np.array([0, 0.5, 1.5, 2.0, 2.5, 3.0])  # gap not included (yet)
 stim_dur = 0.47
 gap_dur = 0.6
-t_min, t_max = -0.5, 6.05
+t_min, t_max = -0.5, 5.5
 t_zs = t_min + np.arange(data_zscore.shape[-1]) / float(fs)
 stat_fun = partial(ttest_1samp_no_p, sigma=1e-3)
 
 # colors
-cue, msk, blu, red = '0.6', '0.75', '#332288', '#aa4499'
+cue, msk, blu, red = '0.5', '0.75', '#332288', '#aa4499'
+signifcol = '0.95'
+axiscol = '0.8'
+tickcol = '0.8'
+axislabcol = '0.3'
+ticklabcol = '0.5'
 
 # set up figure
 fig = plt.figure(figsize=(3, 3.5))
-gs = gridspec.GridSpec(2, 1, height_ratios=[6, 7])
+gs = gridspec.GridSpec(2, 1, height_ratios=[2, 3])
 axs = [plt.subplot(gs[nn]) for nn in range(2)]
-xlim = [np.maximum(t_fit.min(), t_zs.min()),
-        np.minimum(t_fit.max(), t_zs.max())]
+xlim = [t_min, t_max]
+#xlim = [np.maximum(t_fit.min(), t_zs.min()),
+#        np.minimum(t_fit.max(), t_zs.max())]
+signifs = list()
 
 for ii, (t, data) in enumerate(zip([t_zs, t_fit], [data_zscore, data_deconv])):
     # collapse across trials and experimental contrasts
@@ -69,12 +76,12 @@ for ii, (t, data) in enumerate(zip([t_zs, t_fit], [data_zscore, data_deconv])):
     gap_200_vs_600 = np.nanmean(data, axis=(1, 3, 4))
     maint_vs_switch = np.nanmean(data, axis=(1, 2, 4))
     # axis limits
-    ystretch = [-0.1, -0.5][ii]
     ymax = np.ceil(np.max(np.mean(np.nanmean(data, axis=1), axis=0)))
-    ylim = [ystretch * ymax, ymax]
-    # use space near bottom for stim timecourse diagram
-    stim_ymin = ymax * -0.35
-    stim_ymax = ymax * -0.2
+    ystretch = [0, 0.5][ii]
+    ylim = [-0.1 * ymax, (1 + ystretch) * ymax]
+    # y values for stim timecourse diagram
+    stim_ymin = ymax * 1.25
+    stim_ymax = ymax * 1.4
     for contrast in [maint_vs_switch]:
         # within-subject difference between conditions
         contr_diff = (contrast[:, 1, :] - contrast[:, 0, :])[:, :, np.newaxis]
@@ -84,7 +91,7 @@ for ii, (t, data) in enumerate(zip([t_zs, t_fit], [data_zscore, data_deconv])):
         # plot curves
         for kk, (cond, se) in enumerate(zip(contr_mean, contr_std)):
             col = [blu, red][kk]
-            tcol = cc.to_rgb(col) + (0.4,)
+            tcol = cc.to_rgb(col) + (0.4,)  # add alpha channel
             zord = [2, 0][kk]
             # plot standard error bands
             if plot_stderr:
@@ -95,8 +102,8 @@ for ii, (t, data) in enumerate(zip([t_zs, t_fit], [data_zscore, data_deconv])):
                              zorder=zord + 3)
             if ii == 1:
                 # TRIAL TIMECOURSE
-                thk = 0.01 * ymax
-                off = 0.03 * ymax
+                thk = 0.0125 * ymax
+                off = 0.05 * ymax
                 stim_y = [stim_ymin, stim_ymax][kk]
                 stim_c = [cue] * 2 + [col] * 2 + [[col] * 2, [msk] * 2][kk]
                 stim_m = [msk] * 2 + [[msk] * 2, [col] * 2][kk]
@@ -145,63 +152,69 @@ for ii, (t, data) in enumerate(zip([t_zs, t_fit], [data_zscore, data_deconv])):
                 '''
                 clu = clu[0]
                 cluster_ymin = ylim[0] * np.ones_like(t[clu])
-                cluster_ymax = np.max(contr_mean[:, clu], axis=0)
+                cluster_ymax = np.max(contr_mean[:, clu], axis=0)  # under top
                 pval_x = t[int(np.mean(clu[[0, -1]]))]
                 pval_y = -0.1 * ylim[1]
                 pval_ord = np.trunc(np.log10(pv)).astype(int)
-                '''
-                '''
                 _ = axs[ii].fill_between(t[clu], cluster_ymin, cluster_ymax,
-                                         alpha=1, facecolor='0.9', zorder=1,
-                                         edgecolor='none')
-                _ = hatch_between(axs[ii], 10, t[clu], cluster_ymin,
-                                  cluster_ymax, linewidth=0.75, color='w',
-                                  zorder=1)
+                                         alpha=1, facecolor=signifcol,
+                                         zorder=1, edgecolor='none')
                 if show_pval:
                     pval_txt = '$p < 10^{{{}}}$'.format(pval_ord)
                     _ = axs[ii].text(pval_x, pval_y, pval_txt, ha='center',
                                      va='baseline', fontdict=dict(size=10))
+                signifs.append([axs[ii], t, clu, cluster_ymin, cluster_ymax])
     # set axis limits
     xlim[-1] = 1.001 * xlim[-1]
     ylim[-1] = 1.001 * ylim[-1]
     _ = axs[ii].set_ylim(*ylim)
     _ = axs[ii].set_xlim(*xlim)
     # remove yaxis / ticks / ticklabels near bottom
-    ytck = [-0.1 * ymax, ymax]
+    ytck = [-0.1 * ymax, 1.001 * ymax]
     ytl = axs[ii].yaxis.get_ticklocs()
     _ = axs[ii].spines['left'].set_bounds(*ytck)
-    _ = axs[ii].yaxis.set_ticks(ytl[ytl > ytck[0]])
+    for sp in ['left', 'bottom']:
+        _ = axs[ii].spines[sp].set_color(axiscol)
+    _ = axs[ii].yaxis.set_ticks(ytl[ytl <= ytck[1]])
     _ = axs[ii].set_ylim(*ylim)  # have to do this twice
+    _ = axs[ii].tick_params(color=tickcol, width=0.5, labelcolor=ticklabcol)
+
     # subplot labels
     lab = ['a)', 'b)'][ii]
     labx = -0.35
-    _ = axs[ii].text(labx, 1, lab, transform=axs[ii].transAxes,
+    laby = [1, ymax / ylim[1]][ii]
+    _ = axs[ii].text(labx, laby, lab, transform=axs[ii].transAxes,
                      fontdict=dict(weight='bold'))
     # annotations
     yl = ['Pupil size\n(z-score)', 'Effort (AU)'][ii]
-    yo = [0, 0.15 / 1.4][ii]
-    _ = axs[ii].set_ylabel(yl, y=0.5 + yo)
-    # arrows
-    dy = 0.025 * ymax
-    arrow_x = t[clu][0]
-    arrow_y = ylim[0] + 4*dy  # cluster_ymax[0] + 6*dy
-    arrow_dx = 0
-    arrow_dy = -2*dy
+    yo = 0.5 if ii == 0 else (ymax - ylim[0]) / ylim[1] / 2.
+    _ = axs[ii].set_ylabel(yl, y=yo, color=axislabcol)
+    # vertical lines
     if plot_signif:
-        arr = axs[ii].arrow(arrow_x, arrow_y, arrow_dx, arrow_dy,
-                            head_width=0.1, head_length=dy, fc='k', ec='k')
+        tran = axs[ii].transLimits.transform
+        ypt = tran([0, cluster_ymax[0]])[1]
+        ylo = -0.25 if ii == 0 else tran([0, stim_ymin])[1]
+        ymn = [ylo, ypt][ii]
+        ymx = [ypt, ylo][ii]
+        axs[ii].axvline(t[clu][0], ymn, ymx, linestyle=':', color='k',
+                        clip_on=False)
 
 # more annotations
 _ = axs[0].set_xticklabels([''] * len(axs[0].get_xticklabels()))
-_ = axs[1].set_xlabel('Time (s)')
+_ = axs[1].set_xlabel('Time (s)', color=axislabcol)
 
 for ax in axs:
     box_off(ax)
-fig.tight_layout(rect=[0.03, 0, 1, 1], h_pad=1.)
-#fig.subplots_adjust(bottom=0.)
+    ax.patch.set_facecolor('none')
+fig.tight_layout(h_pad=1.)
+
+# hatch_between must come after tight_layout to get same angle on all subplots
+for (ax, t, clu, cluster_ymin, cluster_ymax) in signifs:
+    _ = hatch_between(ax, 10, t[clu], cluster_ymin, cluster_ymax,
+                      linewidth=1.5, color='w', zorder=1)
 
 if savefig:
-    fig.savefig('fig-4.pdf')
+    fig.savefig('fig-4.svg')
 else:
     plt.ion()
     plt.show()
