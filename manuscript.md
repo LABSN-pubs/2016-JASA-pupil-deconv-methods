@@ -95,15 +95,9 @@ Participants were instructed to maintain their gaze on a white fixation dot cent
 Comparison of pupil dilation time series was performed using a non-parametric cluster-level one-sample T-test on the within-subject differences between experimental conditions [@MarisOostenveld2007], as implemented in `mne-python` [@GramfortEtAl2014].
 
 ## Results & Discussion
-foo.
+For the purpose of illustrating the deconvolution technique, only one experimental contrast (“maintain” versus “switch” trials) is presented (Figure 3). Mean pupil size was statistically significantly larger in trials requiring mid-trial attention switches than in trials where subjects maintained attention to the same talker throughout the trial. Deconvolved pupil size shows the same pattern of statistically significant difference between “maintain” and “switch” trials, with one important difference: the divergence of the two deconvolved signals is temporally aligned with the offset of the cue (cf. dotted line in Figure 3b). This is consistent with the view that pupil dilation reflects cognitive load or attentional effort, and that load increases _as soon as listeners know they are hearing a “switch” trial_.
 
-![Comparison of raw pupil size measurement versus deconvolved signal for the short gap (200 ms) versus long gap (600 ms) trials. (a) Mean (± 1 SEM) measured pupil size across subjects. (b) Mean (± 1 SEM) deconvolved pupil size across subjects. Both analyses show the same overall pattern of statistically significant differences, but in (b) the divergence of the time series shows better temporal alignment to differences in the stimuli (small arrow).](fig-3.eps)
-
-foo.
-
-![Comparison of raw pupil size measurement versus deconvolved signal for maintain versus switch trials. (a) Mean (± 1 SEM) measured pupil size across subjects. (b) Mean (± 1 SEM) deconvolved pupil size across subjects. Both analyses show the same overall pattern of statistically significant differences, but in (b) the divergence of the time series aligns to the end of the cue: the point in the trial where trial type information is available (small arrow).](fig-4.eps)
-
-
+![Mean (± 1 SEM) measured pupil size (a) and deconvolved pupil size (b) across subjects for “maintain” versus “switch” trials, with interposed trial schematic showing to-be-attended streams (dark bars). Both analyses show the same overall pattern of statistically significant differences between trial types (hatched regions), but the divergence of the deconvolved signals aligns temporally to the end of the cue (dotted line). SEM = standard error of the mean; AU = arbitrary units.](fig-4.eps)
 
 # General Discussion
 
