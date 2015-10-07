@@ -31,14 +31,16 @@ plot_stderr = True
 plot_signif = True
 show_pval = False
 savefig = True
+continuous_deconv = False
 
 # file I/O
 work_dir = '..'
-data_file = op.join(work_dir, 'voc_data.npz')
+data_file = op.join(work_dir, 'voc_data_wierda.npz')
 dd = np.load(data_file)
 data_deconv, t_fit, subjects = dd['fits'], dd['t_fit'], dd['subjects']
 data_zscore, fs, kernel = dd['zscores'], dd['fs'], dd['kernel']
-data_cont, t_cont = dd['fits_cont'], dd['t_cont']
+if continuous_deconv:
+    data_cont, t_cont = dd['fits_cont'], dd['t_cont']
 '''
 data_zscore.shape
 16,   40,      2,          2,            2,         6550
@@ -215,7 +217,7 @@ for (ax, t, clu, cluster_ymin, cluster_ymax) in signifs:
                       linewidth=1.5, color='w', zorder=1)
 
 if savefig:
-    fig.savefig('fig-4.svg')
+    fig.savefig('fig-4.pdf')
 else:
     plt.ion()
     plt.show()
