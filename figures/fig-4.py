@@ -21,6 +21,7 @@ from convenience_functions import (box_off, use_font, tick_label_size,
                                    hatch_between)
 from functools import partial
 
+# mostly rcParams stuff
 plt.ioff()
 use_font('source')
 tick_label_size(10)
