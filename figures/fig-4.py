@@ -71,16 +71,14 @@ ticklabcol = '0.5'
 fig = plt.figure(figsize=(3, 2.25))
 ax = plt.subplot(111)
 xlim = [t_min, t_max]
-#xlim = [np.maximum(t_fit.min(), t_zs.min()),
-#        np.minimum(t_fit.max(), t_zs.max())]
-signifs = list()
+#signifs = list()
 
 for ii, (t, data) in enumerate(zip([t_fit, t_zs, t_wierda],
                                    [data_deconv, data_zscore, data_wierda])):
     # collapse across trials and experimental contrasts
     # axis 1 is trials, 2 is gap dur, 3 is maint/switch, 4 is num voc channels
-    chan_10_vs_20 = np.nanmean(data, axis=(1, 2, 3))
-    gap_200_vs_600 = np.nanmean(data, axis=(1, 3, 4))
+    '''chan_10_vs_20 = np.nanmean(data, axis=(1, 2, 3))'''
+    '''gap_200_vs_600 = np.nanmean(data, axis=(1, 3, 4))'''
     maint_vs_switch = np.nanmean(data, axis=(1, 2, 4))
     # axis limits
     ymax = np.ceil(np.max(np.mean(np.nanmean(data_deconv, axis=1), axis=0)))
@@ -159,12 +157,6 @@ for ii, (t, data) in enumerate(zip([t_fit, t_zs, t_wierda],
                 pval_y = -0.1 * ylim[1]
                 pval_ord = np.trunc(np.log10(pv)).astype(int)
                 if ii == 0:
-                    '''
-                    _ = ax.fill_between(t[clu], cluster_ymin, cluster_ymax,
-                                        alpha=1, facecolor='none',
-                                        zorder=1, edgecolor=signifcol,
-                                        linewidth=1.25)
-                    '''
                     _ = hatch_between(ax, 9, t[clu], cluster_ymin,
                                       cluster_ymax, linewidth=1.25,
                                       color=signifcol, zorder=1)
@@ -172,7 +164,7 @@ for ii, (t, data) in enumerate(zip([t_fit, t_zs, t_wierda],
                         pval_txt = '$p < 10^{{{}}}$'.format(pval_ord)
                         _ = ax.text(pval_x, pval_y, pval_txt, ha='center',
                                     va='baseline', fontdict=dict(size=10))
-                    signifs.append([ax, t, clu, cluster_ymin, cluster_ymax])
+                    #signifs.append([ax, t, clu, cluster_ymin, cluster_ymax])
     # vertical lines
     if plot_signif:
         if ii == 0:
@@ -181,8 +173,8 @@ for ii, (t, data) in enumerate(zip([t_fit, t_zs, t_wierda],
         else:
             # arrows
             arrow_col = [grn, yel][ii - 1]
-            dy = 0.025 * ymax
             dx = 0.05
+            dy = 0.025 * ymax
             arrow_x = t[clu][0]
             arrow_y = ylim[0] - 7*dy
             arrow_dx = 0
