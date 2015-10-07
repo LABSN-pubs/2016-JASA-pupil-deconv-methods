@@ -25,6 +25,8 @@ from pyeparse import read_raw, Epochs
 from pyeparse.utils import pupil_kernel
 from expyfun.analyze import restore_values
 
+# flags
+run_continuous_deconv = False
 
 # file I/O
 data_dir = 'voc-data'
@@ -35,7 +37,7 @@ voc_data_file = op.join(data_dir, 'orderMain.mat')
 subjects = ['01', '02', '04', '55', '6', '7', '8', '10',
             '11', '12', '13', '14', '96', '97', '98', '99']
 t_min, t_max = -0.5, 6.05
-peak = 0.512
+peak_vals = [0.512, 0.93]  # labsn_nobuttonpress, WeirdaEtAl
 fs = 1000.0
 runs = np.arange(10)
 
@@ -63,6 +65,12 @@ deconv_time_pts = None
 fits = list()
 zscores = list()
 fits_continuous = list()
+kernels = list()
+# pre-calculate kernels
+for peak in peak_vals:
+    kernel = pupil_kernel(fs, t_max=peak, dur=2.0, s=0.015)
+    kernels.append(kernel)
+
 for subj in subjects:
     t0 = time.time()
     print('Subject {}...'.format(subj))
@@ -125,81 +133,108 @@ for subj in subjects:
     print('\n  Epoching...')
     epochs = Epochs(raws, events, event_dict, t_min, t_max)
 
-    print('  Deconvolving...')
-    kernel = pupil_kernel(epochs.info['sfreq'], t_max=peak, dur=2.0, s=0.015)
-    fit, time_pts = epochs.deconvolve(kernel=kernel, n_jobs=6)
-    zscore = epochs.pupil_zscores()
-    if deconv_time_pts is None:
-        deconv_time_pts = time_pts
-    assert np.array_equal(deconv_time_pts, time_pts)
+    kernel_fits = list()
+    kernel_zscores = list()
+    kernel_fits_continuous = list()
+    for kk, kernel in enumerate(kernels):
+        kname = ['LABSN', 'Wierda'][kk]
+        print('  Deconvolving ({} kernel)...'.format(kname))
+        fit, time_pts = epochs.deconvolve(kernel=kernel, n_jobs=6)
+        zscore = epochs.pupil_zscores()
+        if deconv_time_pts is None:
+            deconv_time_pts = time_pts
+        assert np.array_equal(deconv_time_pts, time_pts)
 
-    # reorder fits to match big_mat (stim nums in serial order, voc band, time)
-    order = np.array(run_inds)
-    band_idx = (order[:, :, 1] - 1).ravel()
-    stim_idx = (order[:, :, 0] - 1).ravel()  # convert 1-based to 0-based
-    fits_ordered = np.inf * np.ones((len(big_mat), 2, len(deconv_time_pts)))
-    zscores_ordered = np.inf * np.ones((len(big_mat), 2, epochs.n_times))
-    fits_ordered[stim_idx, band_idx, :] = fit
-    zscores_ordered[stim_idx, band_idx, :] = zscore
-    assert not np.any(fits_ordered == np.inf)
-    assert not np.any(zscores_ordered == np.inf)
+        # reorder fits to match big_mat (stim# in serial order, voc band, time)
+        order = np.array(run_inds)
+        band_idx = (order[:, :, 1] - 1).ravel()
+        stim_idx = (order[:, :, 0] - 1).ravel()  # convert 1-based to 0-based
+        fits_ordered = np.inf * np.ones((len(big_mat), 2,
+                                         len(deconv_time_pts)))
+        zscores_ordered = np.inf * np.ones((len(big_mat), 2, epochs.n_times))
+        fits_ordered[stim_idx, band_idx, :] = fit
+        zscores_ordered[stim_idx, band_idx, :] = zscore
+        assert not np.any(fits_ordered == np.inf)
+        assert not np.any(zscores_ordered == np.inf)
 
-    # now break up by condition (trial, gap, attn, bands, time)
-    n_attn = len(np.unique(big_mat[:, 0]))
-    n_gaps = len(np.unique(big_mat[:, 1]))
-    n_band = len(np.unique(np.array(run_inds)[:, :, 1]))
-    trials_per_cond = len(big_mat) / n_attn / n_gaps
-    fits_structured = np.empty((trials_per_cond, n_gaps, n_attn, n_band,
-                                len(deconv_time_pts)))
-    zscores_structured = np.empty((trials_per_cond, n_gaps, n_attn, n_band,
-                                   epochs.n_times))
-    for ai in range(n_attn):
-        for gi in range(n_gaps):
-            idx = np.logical_and(big_mat[:, 0] == ai + 1,
-                                 big_mat[:, 1] == gi + 1)
-            assert sum(idx) == trials_per_cond
-            fits_structured[:, gi, ai, :, :] = fits_ordered[idx, :, :]
-            zscores_structured[:, gi, ai, :, :] = zscores_ordered[idx, :, :]
+        # now break up by condition (trial, gap, attn, bands, time)
+        n_attn = len(np.unique(big_mat[:, 0]))
+        n_gaps = len(np.unique(big_mat[:, 1]))
+        n_band = len(np.unique(np.array(run_inds)[:, :, 1]))
+        trials_per_cond = len(big_mat) / n_attn / n_gaps
+        fits_structured = np.empty((trials_per_cond, n_gaps, n_attn, n_band,
+                                    len(deconv_time_pts)))
+        zscores_structured = np.empty((trials_per_cond, n_gaps, n_attn, n_band,
+                                       epochs.n_times))
+        for ai in range(n_attn):
+            for gi in range(n_gaps):
+                ix = np.logical_and(big_mat[:, 0] == ai + 1,
+                                    big_mat[:, 1] == gi + 1)
+                assert sum(ix) == trials_per_cond
+                fits_structured[:, gi, ai, :, :] = fits_ordered[ix, :, :]
+                zscores_structured[:, gi, ai, :, :] = zscores_ordered[ix, :, :]
 
-    # continuous deconvolution
-    print('  Downsampling...')
-    fs_out = 25  # no frequency content above 10 Hz in avg data or kernel
-    signal_samp = np.round(
-        zscores_structured.shape[-1] * fs_out / float(fs)).astype(int)
-    kernel_samp = np.round(kernel.shape[-1] * fs_out / float(fs)).astype(int)
-    zscores_lowpass, t_lowpass = ss.resample(zscores_structured, signal_samp,
-                                             t=epochs.times, axis=-1)
-    kernel_lowpass = ss.resample(kernel, kernel_samp)
-    # zero padding
-    zeropad = np.zeros(zscores_lowpass.shape[:-1] + (kernel_samp,))
-    zscores_zeropadded = np.c_[zeropad, zscores_lowpass, zeropad]
-    print('  Continuous deconvolution...')
-    len_deconv = zscores_zeropadded.shape[-1] - kernel_samp + 1
-    t_cont = t_lowpass[:len_deconv - 2 * kernel_samp]  # don't zeropad here
-    fit_continuous_deconv = np.empty(zscores_zeropadded.shape[:-1] +
-                                     (len_deconv,))
-    fit_continuous_deconv[:] = np.inf
-    for _trial in range(zscores_zeropadded.shape[0]):
-        for _gap in range(zscores_zeropadded.shape[1]):  # maintain/switch
-            for _attn in range(zscores_zeropadded.shape[2]):
-                for _band in range(zscores_zeropadded.shape[3]):
-                    signal = zscores_zeropadded[_trial, _gap, _attn, _band, :]
-                    (fit_continuous_deconv[_trial, _gap, _attn, _band, :],
-                     _) = ss.deconvolve(signal, kernel_lowpass)
-    assert not np.any(fit_continuous_deconv == np.inf)
-    # remove zero padding
-    fit_continuous_deconv = fit_continuous_deconv[:, :, :, :,
-                                                  kernel_samp:-kernel_samp]
+        # continuous deconvolution
+        if run_continuous_deconv:
+            print('  Downsampling...')
+            fs_out = 25  # no freq. content above 10 Hz in avg data or kernel
+            signal_samp = np.round(
+                zscores_structured.shape[-1] * fs_out / float(fs)).astype(int)
+            ksamp = np.round(kernel.shape[-1] * fs_out / float(fs)).astype(int)
+            zscores_lowpass, t_lowpass = ss.resample(zscores_structured,
+                                                     signal_samp,
+                                                     t=epochs.times, axis=-1)
+            kernel_lowpass = ss.resample(kernel, ksamp)
+            # zero padding
+            zeropad = np.zeros(zscores_lowpass.shape[:-1] + (ksamp,))
+            zscores_zeropadded = np.c_[zeropad, zscores_lowpass, zeropad]
+            print('  Continuous deconvolution...')
+            len_deconv = zscores_zeropadded.shape[-1] - ksamp + 1
+            t_cont = t_lowpass[:len_deconv - 2 * ksamp]  # don't zeropad
+            fit_continuous_deconv = np.empty(zscores_zeropadded.shape[:-1] +
+                                             (len_deconv,))
+            fit_continuous_deconv[:] = np.inf
+            for _trial in range(zscores_zeropadded.shape[0]):
+                for _gap in range(zscores_zeropadded.shape[1]):
+                    for _attn in range(zscores_zeropadded.shape[2]):
+                        for _band in range(zscores_zeropadded.shape[3]):
+                            signal = zscores_zeropadded[_trial, _gap, _attn,
+                                                        _band, :]
+                            (fit_continuous_deconv[_trial, _gap, _attn,
+                                                   _band, :],
+                             _) = ss.deconvolve(signal, kernel_lowpass)
+            assert not np.any(fit_continuous_deconv == np.inf)
+            # remove zero padding
+            fit_continuous_deconv = fit_continuous_deconv[:, :, :, :,
+                                                          ksamp:-ksamp]
+        # combine results from different kernels
+        kernel_fits.append(fits_structured)
+        kernel_zscores.append(zscores_structured)
+        if run_continuous_deconv:
+            kernel_fits_continuous.append(fit_continuous_deconv)
     # finish subject
-    fits.append(fits_structured)
-    zscores.append(zscores_structured)
-    fits_continuous.append(fit_continuous_deconv)
+    fits.append(kernel_fits)
+    zscores.append(kernel_zscores)
+    if run_continuous_deconv:
+        fits_continuous.append(kernel_fits_continuous)
     print('  Done: {} sec.'.format(str(round(time.time() - t0, 1))))
 
-fits = np.array(fits)
-zscores = np.array(zscores)
-fits_continuous = np.array(fits_continuous)
+fits_nopress = np.array([f[0] for f in fits])
+fits_wierda = np.array([f[1] for f in fits])
+zscores_nopress = np.array([z[0] for z in zscores])
+zscores_wierda = np.array([z[1] for z in zscores])
 
-np.savez_compressed(op.join(work_dir, 'voc_data.npz'), fs=fs, kernel=kernel,
-                    fits=fits, fits_cont=fits_continuous, zscores=zscores,
-                    t_fit=deconv_time_pts, t_cont=t_cont, subjects=subjects)
+out = dict(fs=fs, subjects=subjects, t_fit=deconv_time_pts, t_cont=t_cont)
+out_nopress = dict(kernel=kernels[0], fits=fits_nopress,
+                   zscores=zscores_nopress).update(out)
+out_wierda = dict(kernel=kernels[1], fits=fits_wierda,
+                  zscores=zscores_wierda).update(out)
+
+if run_continuous_deconv:
+    fits_continuous_nopress = np.array([f[0] for f in fits_continuous])
+    fits_continuous_weirda = np.array([f[1] for f in fits_continuous])
+    out_nopress.update(dict(fits_cont=fits_continuous_nopress))
+    out_wierda.update(dict(fits_cont=fits_continuous_weirda))
+
+np.savez_compressed(op.join(work_dir, 'voc_data_nopress.npz'), **out_nopress)
+np.savez_compressed(op.join(work_dir, 'voc_data_wierda.npz'), **out_wierda)
