@@ -224,12 +224,15 @@ fits_wierda = np.array([f[1] for f in fits])
 zscores_nopress = np.array([z[0] for z in zscores])
 zscores_wierda = np.array([z[1] for z in zscores])
 
-out = dict(fs=fs, subjects=subjects, t_fit=deconv_time_pts, t_cont=t_cont)
 out_nopress = dict(kernel=kernels[0], fits=fits_nopress,
-                   zscores=zscores_nopress).update(out)
+                   zscores=zscores_nopress)
 out_wierda = dict(kernel=kernels[1], fits=fits_wierda,
-                  zscores=zscores_wierda).update(out)
-
+                  zscores=zscores_wierda)
+out_common = dict(fs=fs, subjects=subjects, t_fit=deconv_time_pts)
+if run_continuous_deconv:
+    out_common.update(dict(t_cont=t_cont))
+out_nopress.update(out_common)
+out_wierda.update(out_common)
 if run_continuous_deconv:
     fits_continuous_nopress = np.array([f[0] for f in fits_continuous])
     fits_continuous_weirda = np.array([f[1] for f in fits_continuous])
