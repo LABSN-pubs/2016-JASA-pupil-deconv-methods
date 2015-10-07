@@ -45,24 +45,23 @@ def tick_label_size(size=10):
     rcParams['ytick.labelsize'] = size
 
 
-def box_off(ax, spines=['top', 'right']):
+def box_off(ax, spines=['top', 'right'], tck_len=3, tck_pad=2):
     # ax should be a matplotlib.axes.AxesSubplot object
     ax.get_xaxis().tick_bottom()
     ax.get_yaxis().tick_left()
     ax.tick_params(axis='both', which='both', direction='out')
-    ax.tick_params('both', which='major', length=3, pad=2)
+    ax.tick_params(axis='both', which='major', length=tck_len, pad=tck_pad)
     for spine in spines:
         ax.spines[spine].set_color('none')
 
 
 def hatch_between(ax, n, x, y1, y2=0, **kwargs):
+    # ax should be a matplotlib.axes.AxesSubplot object
     aspect = ax.figbox.height / ax.figbox.width
     xx, yy = ax.get_xbound(), ax.get_ybound()
     xx = linspace(xx[0], 2 * xx[1], 2 * n)
     yy = linspace(yy[0], 2 * yy[1], 2 * n) / aspect
-
-    mask = ax.fill_between(x, y1, y2)
-    mask.set_visible(False)
+    mask = ax.fill_between(x, y1, y2, visible=False)
     path = mask.get_paths()[0]
     tran = mask.get_transform()
     for x2, y1 in zip(xx[1:], yy[1:]):
