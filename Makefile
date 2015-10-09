@@ -1,6 +1,7 @@
-all: web sub
+all: web pre sub
 web: makeweb cleanweb
 sub: makesub cleansub
+pre: makepre cleanweb
 
 .PHONY: linkeps linkpdf cleanweb cleansub cleanall
 
@@ -20,13 +21,25 @@ makesub: bib/pupil-kernel.bib submission.tex pandoc/latex-postprocessor.py linke
 	pdflatex McCloyEtAl-pupil-deconvolution.tex
 	pdflatex McCloyEtAl-pupil-deconvolution.tex
 
-submission.tex: manuscript.md pandoc/template-JASA-EL-submission.tex figures/fig-1.eps figures/fig-2.eps figures/fig-4.eps
-	ln -sf bib/jasa-submission.bst pupil-kernel.bst
-	pandoc --latex-engine=xelatex --natbib --no-tex-ligatures --template=pandoc/template-JASA-EL-submission.tex --output=submission.tex manuscript.md
+makepre: bib/pupil-kernel.bib prepress.tex pandoc/latex-postprocessor.py linkpdf
+	python pandoc/latex-postprocessor.py prepress.tex McCloyEtAl-pupil-deconvolution-prepress.tex
+	xelatex McCloyEtAl-pupil-deconvolution-prepress.tex
+	bibtex8 McCloyEtAl-pupil-deconvolution-prepress.aux
+	xelatex McCloyEtAl-pupil-deconvolution-prepress.tex
+	xelatex McCloyEtAl-pupil-deconvolution-prepress.tex
+	xelatex McCloyEtAl-pupil-deconvolution-prepress.tex
 
 manuscript.tex: manuscript.md pandoc/template-JASA-EL-manuscript.tex figures/fig-1.pdf figures/fig-2.pdf figures/fig-4.pdf
 	ln -sf bib/jasa-manuscript.bst pupil-kernel.bst
 	pandoc --latex-engine=xelatex --natbib --no-tex-ligatures --template=pandoc/template-JASA-EL-manuscript.tex --output=manuscript.tex manuscript.md
+
+submission.tex: manuscript.md pandoc/template-JASA-EL-submission.tex figures/fig-1.eps figures/fig-2.eps figures/fig-4.eps
+	ln -sf bib/jasa-submission.bst pupil-kernel.bst
+	pandoc --latex-engine=xelatex --natbib --no-tex-ligatures --template=pandoc/template-JASA-EL-submission.tex --output=submission.tex manuscript.md
+
+prepress.tex: manuscript.md pandoc/template-JASA-EL-prepress.tex figures/fig-1.pdf figures/fig-2.pdf figures/fig-4.pdf
+	ln -sf bib/jasa-submission.bst pupil-kernel.bst
+	pandoc --latex-engine=xelatex --natbib --no-tex-ligatures --template=pandoc/template-JASA-EL-prepress.tex --output=prepress.tex manuscript.md
 
 figures/fig-%.pdf: figures/fig-%.py
 	cd $(<D); python $(<F)
