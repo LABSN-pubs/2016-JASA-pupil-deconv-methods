@@ -19,8 +19,8 @@ plt.ioff()
 use_font('source')
 
 # set up figure
-fig = plt.figure(figsize=(6.5, 2.25))
-ax = plt.Axes(fig, [0.025, 0.2, 0.9, 0.75])
+fig = plt.figure(figsize=(6.5, 1.75))
+ax = plt.Axes(fig, [0.025, 0.25, 0.9, 0.75])
 ax.axis('off')
 fig.add_axes(ax)
 
@@ -29,8 +29,8 @@ gapcol = '#999933'
 malecol = '0.6'
 femalecol = '0.75'
 cuecol = 'w'
-maintcol = '#117733'  # '#332288'
-switchcol = '#aa4499'  # '#44aa99'
+maintcol = '#332288'
+switchcol = '#aa4499'
 lettercol = 'w'
 slashcol = 'k'
 
@@ -72,8 +72,8 @@ ax.text(2.8, -3.3, 'variable gap\n(200 ms or 600 ms)', ha='center',
         va='top', fontsize=10, color=gapcol)
 
 # captions
-ax.text(0.5, 4, 'Cue', color='k', fontsize=11, ha='center', va='center')
-ax.text(2.8, 4, 'Simultaneous target\nand masker streams', color='k',
+ax.text(0.5, 3.5, 'Cue', color='k', fontsize=11, ha='center', va='center')
+ax.text(2.8, 3.5, 'Concurrent target and masker streams', color='k',
         fontsize=11, ha='center', va='center', weight='normal')
 ax.text(1.5, 2.55, 'male', color=malecol, fontsize=9, ha='left', va='baseline',
         weight='bold')
