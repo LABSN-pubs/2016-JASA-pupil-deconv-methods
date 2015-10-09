@@ -42,7 +42,7 @@ ad = np.load(avg_data_file)
 subjects, avg_data, t = ad['subjects'], ad['data'], ad['t']
 
 # plot
-fig, axs = plt.subplots(1, 2, sharey=True, figsize=(6.5, 3))
+fig, axs = plt.subplots(1, 2, sharey=True, figsize=(6.5, 2.25))
 across_subj = np.mean(avg_data, axis=0)
 across_subj_sem = np.std(avg_data, axis=0) / np.sqrt(len(avg_data) - 1)
 maxs = across_subj.max(axis=-1)
@@ -68,7 +68,8 @@ for ii, (dat, sem) in enumerate(zip(across_subj, across_subj_sem)):
     _ = axs[ii].text(labx, 1, lab, transform=axs[ii].transAxes,
                      fontdict=dict(weight='bold'))
     _ = axs[ii].tick_params(color=tickcol, width=0.5, labelcolor=ticklabcol)
-_ = axs[0].set_ylabel('Pupil size (z-score)', color=axislabcol)
+_ = axs[0].set_ylabel('Pupil size (z-score)', color=axislabcol, y=0.41,
+                      va='bottom')
 
 for ax in axs:
     box_off(ax, ['top', 'bottom', 'left', 'right'])
