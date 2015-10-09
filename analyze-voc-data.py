@@ -177,20 +177,22 @@ for subj in subjects:
         # continuous deconvolution
         if run_continuous_deconv:
             print('  Downsampling...')
+            a, b = ss.butter(1, 12.5)
             fs_out = 25  # no freq. content above 10 Hz in avg data or kernel
             signal_samp = np.round(
                 zscores_structured.shape[-1] * fs_out / float(fs)).astype(int)
             ksamp = np.round(kernel.shape[-1] * fs_out / float(fs)).astype(int)
-            zscores_lowpass, t_lowpass = ss.resample(zscores_structured,
-                                                     signal_samp,
-                                                     t=epochs.times, axis=-1)
+            zscores_lowpass = ss.lfilter(b, a, zscores_structured)
+            zscores_downsamp, t_downsamp = ss.resample(zscores_lowpass,
+                                                       signal_samp,
+                                                       t=epochs.times, axis=-1)
             kernel_lowpass = ss.resample(kernel, ksamp)
             # zero padding
-            zeropad = np.zeros(zscores_lowpass.shape[:-1] + (ksamp,))
-            zscores_zeropadded = np.c_[zeropad, zscores_lowpass, zeropad]
+            zeropad = np.zeros(zscores_downsamp.shape[:-1] + (ksamp,))
+            zscores_zeropadded = np.c_[zeropad, zscores_downsamp, zeropad]
             print('  Continuous deconvolution...')
             len_deconv = zscores_zeropadded.shape[-1] - ksamp + 1
-            t_cont = t_lowpass[:len_deconv - 2 * ksamp]  # don't zeropad
+            t_cont = t_downsamp[:len_deconv - 2 * ksamp]  # don't zeropad
             fit_continuous_deconv = np.empty(zscores_zeropadded.shape[:-1] +
                                              (len_deconv,))
             fit_continuous_deconv[:] = np.inf
