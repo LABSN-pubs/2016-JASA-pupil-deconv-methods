@@ -1,11 +1,11 @@
 all: web pre sub
 web: makeweb cleanweb
 sub: makesub cleansub
-pre: makepre cleanweb
+pre: makepre cleanpre
 
 .PHONY: linkeps linkpdf cleanweb cleansub cleanall
 
-makeweb: bib/pupil-kernel.bib manuscript.tex linkpdf
+makeweb: bib/pupil-kernel.bib manuscript.tex pandoc/latex-postprocessor.py linkpdf
 	python pandoc/latex-postprocessor.py manuscript.tex McCloyEtAl-pupil-deconvolution-manuscript.tex
 	xelatex McCloyEtAl-pupil-deconvolution-manuscript.tex
 	bibtex8 McCloyEtAl-pupil-deconvolution-manuscript.aux
@@ -29,16 +29,16 @@ makepre: bib/pupil-kernel.bib prepress.tex pandoc/latex-postprocessor.py linkpdf
 	xelatex McCloyEtAl-pupil-deconvolution-prepress.tex
 	xelatex McCloyEtAl-pupil-deconvolution-prepress.tex
 
-manuscript.tex: manuscript.md pandoc/template-JASA-EL-manuscript.tex figures/fig-1.pdf figures/fig-2.pdf figures/fig-4.pdf
+manuscript.tex: manuscript.md  bib/jasa-manuscript.bst pandoc/template-JASA-EL-manuscript.tex figures/fig-1.pdf figures/fig-2.pdf figures/fig-4.pdf
 	ln -sf bib/jasa-manuscript.bst pupil-kernel.bst
 	pandoc --latex-engine=xelatex --natbib --no-tex-ligatures --template=pandoc/template-JASA-EL-manuscript.tex --output=manuscript.tex manuscript.md
 
-submission.tex: manuscript.md pandoc/template-JASA-EL-submission.tex figures/fig-1.eps figures/fig-2.eps figures/fig-4.eps
+submission.tex: manuscript.md bib/jasa-submission.bst pandoc/template-JASA-EL-submission.tex figures/fig-1.eps figures/fig-2.eps figures/fig-4.eps
 	ln -sf bib/jasa-submission.bst pupil-kernel.bst
 	pandoc --latex-engine=xelatex --natbib --no-tex-ligatures --template=pandoc/template-JASA-EL-submission.tex --output=submission.tex manuscript.md
 
-prepress.tex: manuscript.md pandoc/template-JASA-EL-prepress.tex figures/fig-1.pdf figures/fig-2.pdf figures/fig-4.pdf
-	ln -sf bib/jasa-submission.bst pupil-kernel.bst
+prepress.tex: manuscript.md bib/jasa-prepress.bst pandoc/template-JASA-EL-prepress.tex figures/fig-1.pdf figures/fig-2.pdf figures/fig-4.pdf
+	ln -sf bib/jasa-prepress.bst pupil-kernel.bst
 	pandoc --latex-engine=xelatex --natbib --no-tex-ligatures --template=pandoc/template-JASA-EL-prepress.tex --output=prepress.tex manuscript.md
 
 figures/fig-%.pdf: figures/fig-%.py
@@ -58,7 +58,11 @@ cleansub:
 	rm -f *.tex *.eps *-eps-converted-to.pdf nonascii.txt pupil-kernel.bst
 	bn="McCloyEtAl-pupil-deconvolution"; for ext in $(EXTS); do rm -f "$$bn.$$ext"; done
 
-clean: cleanweb cleansub
+cleanpre:
+	rm -f *.tex fig-*.pdf nonascii.txt pupil-kernel.bst
+	bn="McCloyEtAl-pupil-deconvolution-prepress"; for ext in $(EXTS); do rm -f "$$bn.$$ext"; done
+
+clean: cleanweb cleansub cleanpre
 	rm -f McCloyEtAl-pupil-deconvolution.pdf McCloyEtAl-pupil-deconvolution-manuscript.pdf $(EPSFIGS) $(PDFFIGS)
 
 EPSFIGS = figures/*.eps
