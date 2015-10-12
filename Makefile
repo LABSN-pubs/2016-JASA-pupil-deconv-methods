@@ -29,16 +29,16 @@ makepre: bib/pupil-kernel.bib prepress.tex pandoc/latex-postprocessor.py linkpdf
 	xelatex McCloyEtAl-pupil-deconvolution-prepress.tex
 	xelatex McCloyEtAl-pupil-deconvolution-prepress.tex
 
-manuscript.tex: manuscript.md  bib/jasa-manuscript.bst pandoc/template-JASA-EL-manuscript.tex figures/fig-1.pdf figures/fig-2.pdf figures/fig-4.pdf
-	ln -sf bib/jasa-manuscript.bst pupil-kernel.bst
+manuscript.tex: manuscript.md  bib/jasa-el-manuscript.bst pandoc/template-JASA-EL-manuscript.tex figures/fig-1.pdf figures/fig-2.pdf figures/fig-4.pdf
+	ln -sf bib/jasa-el-manuscript.bst pupil-kernel.bst
 	pandoc --latex-engine=xelatex --natbib --no-tex-ligatures --template=pandoc/template-JASA-EL-manuscript.tex --output=manuscript.tex manuscript.md
 
-submission.tex: manuscript.md bib/jasa-submission.bst pandoc/template-JASA-EL-submission.tex figures/fig-1.eps figures/fig-2.eps figures/fig-4.eps
-	ln -sf bib/jasa-submission.bst pupil-kernel.bst
+submission.tex: manuscript.md bib/jasa-el-submission.bst pandoc/template-JASA-EL-submission.tex figures/fig-1.eps figures/fig-2.eps figures/fig-4.eps
+	ln -sf bib/jasa-el-submission.bst pupil-kernel.bst
 	pandoc --latex-engine=xelatex --natbib --no-tex-ligatures --template=pandoc/template-JASA-EL-submission.tex --output=submission.tex manuscript.md
 
-prepress.tex: manuscript.md bib/jasa-prepress.bst pandoc/template-JASA-EL-prepress.tex figures/fig-1.pdf figures/fig-2.pdf figures/fig-4.pdf
-	ln -sf bib/jasa-prepress.bst pupil-kernel.bst
+prepress.tex: manuscript.md bib/jasa-el-prepress.bst pandoc/template-JASA-EL-prepress.tex figures/fig-1.pdf figures/fig-2.pdf figures/fig-4.pdf
+	ln -sf bib/jasa-el-prepress.bst pupil-kernel.bst
 	pandoc --latex-engine=xelatex --natbib --no-tex-ligatures --template=pandoc/template-JASA-EL-prepress.tex --output=prepress.tex manuscript.md
 
 figures/fig-%.pdf: figures/fig-%.py
