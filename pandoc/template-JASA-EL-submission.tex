@@ -139,16 +139,17 @@ $endif$
 $if(title)$\title{$title$$if(titlenote)$\thanks{$titlenote$}$endif$}$endif$
 $if(subtitle)$\subtitle{$subtitle$}$endif$
 
-$for(author)$\author{$author.name$$if(author.email)$\thanks{Author to whom correspondence should be addressed. Electronic mail: $author.email$}\thanksgap{1ex}$endif$}
+$for(author)$\author{$author.name$}
 $if(author.affiliation)$\affil{$for(author.affiliation)$$author.affiliation$$sep$ \& $endfor$}$endif$
 $endfor$
-$if(date)$\date{$date$}$else$\date{\today}$endif$
+\affil{$for(author)$$author.email$$sep$, $endfor$}
+$if(date)$\date{$date$}$else$\date{}$endif$
 
 \begin{document}
 \doublespacing
 
 $if(title)$\maketitle$if(runningtitle)$\begin{center}Running title: $runningtitle$\end{center}$endif$\newpage$endif$
-$if(abstract)$\begin{abstract}$abstract$\end{abstract}\bigskip\copyright~$if(copyrightyear)$$copyrightyear$~$endif$Acoustical Society of America\newline $if(pacs)$PACS Numbers: $for(pacs)$$pacs$$sep$, $endfor$$endif$\newpage$endif$
+$if(abstract)$\begin{abstract}$abstract$\end{abstract}\bigskip\copyright~$if(copyrightyear)$$copyrightyear$~$endif$Acoustical Society of America\newline $if(keywords)$Keywords: $for(keywords)$$keywords$$sep$, $endfor$$endif$\newpage$endif$
 
 $for(include-before)$
 $include-before$

@@ -136,10 +136,11 @@ $endif$
 $if(title)$\title{$title$$if(titlenote)$\thanks{$titlenote$}$endif$}$endif$
 $if(subtitle)$\subtitle{$subtitle$}$endif$
 
-$for(author)$\author{$author.name$$if(author.email)$\thanks{Author to whom correspondence should be addressed. Electronic mail: $author.email$}\thanksgap{1ex}$endif$}
+$for(author)$\author{$author.name$}
 $if(author.affiliation)$\affil{$for(author.affiliation)$$author.affiliation$$sep$ \& $endfor$}$endif$
 $endfor$
-$if(date)$\date{$date$}$else$\date{\today}$endif$
+\affil{$for(author)$$author.email$$sep$, $endfor$}
+$if(date)$\date{$date$}$else$\date{}$endif$
 
 \begin{document}
 \doublespacing
@@ -147,7 +148,7 @@ $if(date)$\date{$date$}$else$\date{\today}$endif$
 %\begin{spacing}{2}
 
 $if(title)$\maketitle$if(runningtitle)$\begin{center}Running title: $runningtitle$\end{center}$endif$\newpage$endif$
-$if(abstract)$\begin{abstract}$abstract$\end{abstract}$if(pacs)$\bigskip\bigskip\bigskip PACS Numbers: $for(pacs)$$pacs$$sep$, $endfor$$endif$\newpage$endif$
+$if(abstract)$\begin{abstract}\noindent$abstract$\end{abstract}$if(keywords)$\bigskip\bigskip\bigskip Keywords: $for(keywords)$$keywords$$sep$, $endfor$$endif$\newpage$endif$
 
 $for(include-before)$
 $include-before$
