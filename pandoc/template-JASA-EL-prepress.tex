@@ -1,9 +1,8 @@
 % !TEX TS-program = xelatex
 % !TEX encoding = UTF-8
-\documentclass[$if(fontsize)$$fontsize$,$endif$$if(lang)$$lang$,$endif$$if(papersize)$$papersize$,$endif$$for(classoption)$$classoption$$sep$,$endfor$]{$documentclass$}
-$if(geometry)$\usepackage[$for(geometry)$$geometry$$sep$,$endfor$]{geometry}$endif$
-$if(natbib)$\usepackage{natbib}\bibliographystyle{$if(biblio-style)$$biblio-style$$else$plainnat$endif$}$endif$
-$if(biblatex)$\usepackage{biblatex}$if(biblio-files)$\bibliography{$biblio-files$}$endif$$endif$
+\documentclass[11pt,oneside]{article}
+\usepackage[letterpaper, left=120pt, right=120pt, top=50pt, bottom=50pt]{geometry}
+$if(natbib)$\usepackage[super,sort&compress,comma]{natbib}\bibliographystyle{$if(biblio-style)$$biblio-style$$else$plainnat$endif$}$endif$
 $if(listings)$\usepackage{listings}$endif$
 $if(tables)$\usepackage{tabularx,array,booktabs,multirow}$endif$
 % use microtype if available
@@ -29,39 +28,18 @@ $endif$
             colorlinks=false,
             pdfborder={0 0 0}}
 
-$if(numbersections)$
-%\setcounter{secnumdepth}{5}
-$else$
-%\setcounter{secnumdepth}{0}
-$endif$
-$if(verbatim-in-note)$
-%\VerbatimFootnotes % allows verbatim text in footnotes 
-$endif$
-$if(mainfont)$
-%    \setmainfont{$mainfont$}
-$endif$
-$if(sansfont)$
-%    \setsansfont{$sansfont$}
-$endif$
-$if(monofont)$
-%    \setmonofont[Mapping=tex-ansi]{$monofont$}
-$endif$
-$if(mathfont)$
-%    \setmathfont(Digits,Latin,Greek){$mathfont$}
-$endif$
-
 % % % % % % % % % % % % % % % % % %
 % MOSTLY JASA-SPECIFIC FORMATTING %
 % % % % % % % % % % % % % % % % % %
 \usepackage{amsmath, setspace}
 % TITLE PAGE HACKS
 \usepackage{titling}
-\pretitle{\begin{center}\large}
-\posttitle{\par\end{center}\medskip}
+\pretitle{\begin{center}\LARGE\bfseries}
+\posttitle{\par\end{center}\smallskip}
 \preauthor{\begin{center}\begin{tabular}[t]{c}}
-\postauthor{\end{tabular}\par\end{center}\medskip}
-\predate{\begin{center}}
-\postdate{\par\end{center}\medskip}
+\postauthor{\end{tabular}\par\end{center}}
+\predate{\vspace{-\baselineskip}}
+\postdate{\vspace{-\baselineskip}}
 % formatting for the titlepage footnotes
 \thanksmarkseries{alph}
 \thanksheadextra{\thinspace}{)}
@@ -71,26 +49,11 @@ $endif$
 \setlength{\footnotesep}{2em}
 % author block
 \usepackage[blocks]{authblk}
-\renewcommand{\Authfont}{\scshape} 
-\renewcommand\Affilfont{\normalfont\itshape} 
+\renewcommand{\Authfont}{\normalsize\bfseries} 
+\renewcommand\Affilfont{\normalfont\small\itshape} 
 \setlength{\affilsep}{0in}
-% SINGLE SPACE TABLES
-\usepackage{siunitx}
-\usepackage{etoolbox}  % provides \AtBeginEnvironment and \apptocmd
-\AtBeginEnvironment{tabular}{\singlespacing}
-% LIST OF FIGURES HACKS
-\usepackage{tocloft}
-% add some space between paragraphs in the list of figures
-\setlength\cftbeforefigskip{1em}
-% remove dots and page numbers from the list of figures
-\renewcommand{\cftdotsep}{\cftnodots}
-\apptocmd{\enoteheading}{\vspace{-\baselineskip}}{}{}
-\cftpagenumbersoff{figure}
-\setlength{\cftafterloftitleskip}{0.5\baselineskip}
-\setlength{\cftfignumwidth}{1em}
-\setlength{\cftfigindent}{0pt}
-\renewcommand{\cftpnumalign}{l}
-\renewcommand{\cftfigpresnum}{\bfseries}
+% caption size
+\usepackage[font=small]{caption}
 %% push all textual footnotes to the end and print them normal size
 %\usepackage{endnotes}
 %\let\footnote=\endnote
@@ -101,17 +64,29 @@ $endif$
 %% format endnotes name to match other headings
 %\renewcommand{\notesname}{\bfseries\large\uppercase{notes}}
 % formatting for section & subsection headings and table captions
-\makeatletter\renewcommand{\section}{\@startsection {section}{1}{0mm}{-\baselineskip}{0.5\baselineskip}{\bfseries\large\uppercase}}\makeatother %{name}{level}{indent}{beforeskip}{afterskip}{style}
-\makeatletter\renewcommand{\subsubsection}{\@startsection {subsubsection}{3}{0mm}{-\baselineskip}{0.5\baselineskip}{\bfseries\itshape}}\makeatother %{name}{level}{indent}{beforeskip}{afterskip}{style}
-\renewcommand{\thesection}{\Roman{section}.} 
-\renewcommand{\thesubsection}{\Alph{subsection}.} 
-\renewcommand{\thesubsubsection}{\arabic{subsubsection}.} 
-\renewcommand*\thetable{\Roman{table}}
-% format various headings to match the style of section headings 
-\renewcommand{\refname}{\bfseries\large\uppercase{references}}
-\renewcommand{\abstractname}{\bfseries\large\uppercase{abstract}}
-\renewcommand{\listfigurename}{\bfseries\large\uppercase{list of figures}}
+\usepackage{titlesec}
+%\titleformat{command}[shape]{format}{label}{sep}{beforecode}[aftercode]
+\titleformat{\section}[hang]{\bfseries}{\thesection}{0.5em}{}%
+\titleformat{\subsection}[hang]{\itshape}{\thesubsection}{0.5em}{}%
+%\titlespacing*{command}{left}{before}{after}[right]%
+\titlespacing*{\section}{0pt}{0.4\baselineskip}{0.2\baselineskip}%
+\titlespacing*{\subsection}{0pt}{0.4\baselineskip}{0.5em}%
 
+\renewcommand{\thesection}{\arabic{section}.} 
+\renewcommand{\thesubsection}{\arabic{section}.\arabic{subsection}} 
+\renewcommand{\thesubsubsection}{\arabic{section}.\arabic{subsection}.\arabic{subsubsection}}
+\renewcommand*\thetable{\Roman{Table}}
+% format various headings to match the style of section headings 
+\renewcommand{\refname}{\bfseries{References}}
+\renewcommand{\listfigurename}{\bfseries{List of Figures}}
+% bibliography spacing
+\def\bibfont{\small}
+\setlength{\bibindent}{0em}
+\setlength{\bibsep}{0pt plus 0.3ex}
+\makeatletter
+\renewcommand\@biblabel[1]{\textsuperscript{#1}}
+\makeatother
+\setcitestyle{aysep={}}
 % % % % % % % % % % % % % 
 % other customizations  %
 % % % % % % % % % % % % % 
@@ -125,8 +100,8 @@ $endif$
 \usepackage{placeins}  % provides \FloatBarrier, inserted by the pandoc postprocessor 
 %\patchcmd{\thanks}{#1}{\protect\singlespacing\normalsize#1}{}{}
 \usepackage{fontspec}
-\setmainfont[Numbers={Lining}]{Linux Libertine O} 
-\setmonofont[ItalicFont={Source Sans Pro}]{Source Sans Pro}
+\setmainfont[Ligatures=TeX, Numbers={Lining}]{Times New Roman} 
+\setmonofont{Arial}
 \renewcommand{\url}{\begingroup \def\UrlLeft{}\def\UrlRight{}\urlstyle{same}\Url} % set URLs in whatever font surrounding text uses
 \thickmuskip=5mu plus 3mu minus 1mu % adjust equation spacing around =
 
@@ -141,22 +116,17 @@ $if(author.affiliation)$\affil{$for(author.affiliation)$$author.affiliation$$sep
 $endfor$
 \affil{$for(author)$$author.email$$sep$, $endfor$}
 $if(date)$\date{$date$}$else$\date{}$endif$
-
 \begin{document}
-\doublespacing
-\raggedright
-%\begin{spacing}{2}
 
-$if(title)$\maketitle$if(runningtitle)$\begin{center}Running title: $runningtitle$\end{center}$endif$\newpage$endif$
-$if(abstract)$\begin{abstract}\noindent{}$abstract$\end{abstract}$if(keywords)$\bigskip\bigskip\bigskip Keywords: $for(keywords)$$keywords$$sep$, $endfor$$endif$\newpage$endif$
+$if(title)$\maketitle$endif$ %$if(runningtitle)$\begin{center}Running title: $runningtitle$\end{center}$endif$
+$if(abstract)$\begin{quotation}\noindent\textbf{Abstract:} $abstract$\newline{\footnotesize © 2015 Acoustical Society of America}$if(keywords)$\newline{\footnotesize Keywords: $for(keywords)$$keywords$$sep$, $endfor$}$endif$\end{quotation}$endif$ %$if(pacs)$\bigskip PACS Numbers: $for(pacs)$$pacs$$sep$, $endfor$$endif$
+
 
 $for(include-before)$
 $include-before$
 $endfor$
 
 $body$
-
-\cleardoublepage
 
 $if(acknowledgments)$\section*{acknowledgments}$acknowledgments$\cleardoublepage$endif$
 
@@ -174,11 +144,6 @@ $if(biblio-title)$\renewcommand\refname{$biblio-title$}$endif$
 \bibliography{$biblio-files$}
 $endif$
 $endif$
-$if(biblatex)$\printbibliography$if(biblio-title)$[title=$biblio-title$]$endif$$endif$
-
-\cleardoublepage
-% TABLES GO HERE, EACH WITH A \clearpage AFTER IT.
-\listoffigures
 
 $for(include-after)$
 $include-after$

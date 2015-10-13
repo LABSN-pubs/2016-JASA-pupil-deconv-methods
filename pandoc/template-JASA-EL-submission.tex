@@ -1,7 +1,7 @@
 \documentclass[$if(fontsize)$$fontsize$,$endif$$if(lang)$$lang$,$endif$$if(papersize)$$papersize$,$endif$$for(classoption)$$classoption$$sep$,$endfor$]{$documentclass$}
 $if(geometry)$\usepackage[$for(geometry)$$geometry$$sep$,$endfor$]{geometry}$endif$
 $if(tables)$\usepackage{tabularx,array,booktabs,multirow}$endif$
-$if(natbib)$\usepackage{natbib}\bibliographystyle{$if(biblio-style)$$biblio-style$$else$plainnat$endif$}$endif$
+$if(natbib)$\usepackage[sort&compress,super,comma]{natbib}\bibliographystyle{$if(biblio-style)$$biblio-style$$else$plainnat$endif$}$endif$
 
 $if(graphics)$
 \usepackage{graphicx}
@@ -23,17 +23,16 @@ $endif$
             colorlinks=false,
             pdfborder={0 0 0}}
 
-%% %% %% %% %% %% %% %% %% %%
-%%  TITLE PAGE FORMATTING  %%
-%% %% %% %% %% %% %% %% %% %%
+%% TITLE PAGE FORMATTING
 \usepackage{titling}
-\pretitle{\begin{center}\large}
-\posttitle{\par\end{center}\medskip}
+\setlength{\droptitle}{-4\baselineskip}
+\pretitle{\begin{center}\large\bfseries}
+\posttitle{\par\end{center}\smallskip}
 \preauthor{\begin{center}\begin{tabular}[t]{c}}
-\postauthor{\end{tabular}\par\end{center}\medskip}
+\postauthor{\end{tabular}\par\end{center}\smallskip}
 \predate{\begin{center}}
-\postdate{\par\end{center}\medskip}
-%% formatting for title page footnotes
+\postdate{\par\end{center}\smallskip}
+%% title page footnotes
 \thanksmarkseries{alph}
 \thanksheadextra{\thinspace}{)}
 \thanksfootextra{}{)}
@@ -42,13 +41,11 @@ $endif$
 \setlength{\footnotesep}{2em}
 %% author block
 \usepackage[blocks]{authblk}
-\renewcommand{\Authfont}{\scshape} 
-\renewcommand\Affilfont{\normalfont\itshape} 
-\setlength{\affilsep}{0in}
+\renewcommand{\Authfont}{\bfseries} 
+\renewcommand{\Affilfont}{\normalfont\itshape} 
+\setlength{\affilsep}{0ex}
 
-%% %% %% %% %% %% %% %%
-%% HEADER AND FOOTER %%
-%% %% %% %% %% %% %% %%
+%% HEADER AND FOOTER
 $if(header)$
 \usepackage{fancyhdr}
 \pagestyle{fancy}
@@ -58,9 +55,11 @@ $if(header)$
 \renewcommand{\headrulewidth}{0pt}
 $endif$
 
-%% %% %% %% %% %% %% %%
-%%  LIST OF FIGURES  %%
-%% %% %% %% %% %% %% %%
+%% LINE NUMBERS
+\usepackage{lineno}
+\renewcommand\linenumberfont{\normalfont\scriptsize}
+
+%%  LIST OF FIGURES 
 \usepackage{tocloft}
 %% list of figures spacing commands
 \setlength\cftbeforefigskip{1em}
@@ -73,83 +72,61 @@ $endif$
 \renewcommand{\cftdotsep}{\cftnodots}
 \cftpagenumbersoff{figure}
 
-%% %% %% %% %% %% %% %% %%
-%% FOOTNOTES > ENDNOTES %%
-%% %% %% %% %% %% %% %% %%
-%\usepackage{endnotes}
-%\let\footnote=\endnote
-%\def\enotesize{\normalsize}
-%\renewcommand\enoteformat{\noindent\makebox[1em][l]{\bfseries\theenmark}\hangindent 1em}
-%% remove extra space between "NOTES" and first endnote (caused by previous command)
-%\apptocmd{\enoteheading}{\vspace{-\baselineskip}}{}{}
-%% format endnotes name to match other headings
-%\renewcommand{\notesname}{\bfseries\large\uppercase{notes}}
+%% SECTION HEADINGS
+\usepackage{titlesec}
+\titleformat{\section}[hang]{\bfseries}{\thesection}{0.5em}{}%
+\titleformat{\subsection}[hang]{\itshape}{\thesubsection}{0.5em}{}%
+\titlespacing*{\section}{0pt}{0.4\baselineskip}{0.2\baselineskip}%
+\titlespacing*{\subsection}{0pt}{0.4\baselineskip}{0.2\baselineskip}%
+\renewcommand{\thesection}{\arabic{section}.} 
+\renewcommand{\thesubsection}{\arabic{section}.\arabic{subsection}} 
+\renewcommand{\thesubsubsection}{\arabic{section}.\arabic{subsection}.\arabic{subsubsection}}
 
-%% %% %% %% %% %% %% %%
-%%  FORMAT HEADINGS  %%
-%% %% %% %% %% %% %% %%
-%% formatting for section & subsection headings and table captions
-\makeatletter\renewcommand{\section}{\@startsection {section}{1}{0mm}{-\baselineskip}{0.5\baselineskip}{\bfseries\large\uppercase}}\makeatother %{name}{level}{indent}{beforeskip}{afterskip}{style}
-\makeatletter\renewcommand{\subsubsection}{\@startsection {subsubsection}{3}{0mm}{-\baselineskip}{0.5\baselineskip}{\bfseries\itshape}}\makeatother %{name}{level}{indent}{beforeskip}{afterskip}{style}
-\renewcommand{\thesection}{\Roman{section}.} 
-\renewcommand{\thesubsection}{\Alph{subsection}.} 
-\renewcommand{\thesubsubsection}{\arabic{subsubsection}.} 
-%% format various other headings to match the style of section headings 
-\renewcommand{\refname}{\bfseries\large\uppercase{references}}
-\renewcommand{\abstractname}{\bfseries\large\uppercase{abstract}}
-\renewcommand{\listfigurename}{\bfseries\large\uppercase{list of figures}}
+% format various headings to match the style of section headings 
+\renewcommand{\refname}{\bfseries{References}}
+\renewcommand{\listfigurename}{\bfseries{List of figures}}
 
-%% %% %% %% %%
-%%  TABLES  %%
-%% %% %% %% %%
+%% BIBLIOGRAPHY
+\makeatletter
+\renewcommand\@biblabel[1]{\textsuperscript{#1}}
+\makeatother
+
+%% TABLES
 \usepackage{siunitx}
-%\sisetup{table-number-alignment=center}
-%% TABLE REFERENCE FORMATTING
+\sisetup{table-number-alignment=center}
+%% Table reference formatting
 \renewcommand*{\thetable}{\Roman{table}}
-%% SINGLE SPACE TABLES
+%% line spacing in tables
 \usepackage{etoolbox}  % provides \AtBeginEnvironment and \apptocmd
 \AtBeginEnvironment{tabular}{\singlespacing}
-%% MOVE ALL TABLES TO END OF DOCUMENT
+%% move all tables to end of document
 \usepackage[tablesonly, notablist, tablesfirst]{endfloat}
 
-%% %% %% %% %% %% %% %% %%
-%% OTHER CUSTOMIZATIONS %%
-%% %% %% %% %% %% %% %% %%
-%% VULGAR FRACTIONS
-\usepackage{xfrac}
-%% FIX MATH IN CAPTIONS
-\usepackage{fixltx2e}
-%% DOUBLE-SPACE DOCUMENT
-\usepackage{setspace}
+%% OTHER CUSTOMIZATIONS
+\usepackage{setspace}  %% DOUBLE-SPACING
+\usepackage{xfrac}     %% VULGAR FRACTIONS
+\usepackage{fixltx2e}  %% FIX MATH IN CAPTIONS
+\usepackage{textcomp}  %% for symbols that could be proper unicode, but JASA doesn't use XeLaTeX
+\thickmuskip=5mu plus 3mu minus 1mu  %% ADJUST EQUATION SPACING AROUND BINARY OPERATORS LIKE =
 %% SET URLS IN WHATEVER FONT SURROUNDING TEXT USES
 \renewcommand{\url}{\begingroup \def\UrlLeft{}\def\UrlRight{}\urlstyle{same}\Url}
-%% ADJUST EQUATION SPACING AROUND BINARY OPERATORS LIKE =
-\thickmuskip=5mu plus 3mu minus 1mu
-%% FONTS, ETC.
-\usepackage{textcomp} % for symbols that could be done with proper unicode, but JASA doesn't use XeLaTeX
-%\usepackage{fontspec}
-%\setmainfont[Numbers={Lining}]{Linux Libertine O} 
-%\setmonofont[ItalicFont={Source Sans Pro}]{Source Sans Pro}
-%% CITATION ALIASES
-%\defcitealias{ansi2004}{ANSI, 2004}  % avoid in-text citation to "American National Standards Institute"
 
-%% %% %% %% %% %% %% %% %% %% %% %%
-%% title, subtitle, author, date %%
-%% %% %% %% %% %% %% %% %% %% %% %%
+%% TITLE PAGE
 $if(title)$\title{$title$$if(titlenote)$\thanks{$titlenote$}$endif$}$endif$
 $if(subtitle)$\subtitle{$subtitle$}$endif$
-
 $for(author)$\author{$author.name$}
 $if(author.affiliation)$\affil{$for(author.affiliation)$$author.affiliation$$sep$ \& $endfor$}$endif$
 $endfor$
 \affil{$for(author)$$author.email$$sep$, $endfor$}
-$if(date)$\date{$date$}$else$\date{}$endif$
+$if(date)$\date{$date$}$else$\date{\today}$endif$
 
 \begin{document}
 \doublespacing
 
-$if(title)$\maketitle$if(runningtitle)$\begin{center}Running title: $runningtitle$\end{center}$endif$\newpage$endif$
-$if(abstract)$\begin{abstract}$abstract$\end{abstract}\bigskip\copyright~$if(copyrightyear)$$copyrightyear$~$endif$Acoustical Society of America\newline $if(keywords)$Keywords: $for(keywords)$$keywords$$sep$, $endfor$$endif$\newpage$endif$
+$if(title)$\maketitle$if(runningtitle)$\begin{center}Running title: $runningtitle$\end{center}$endif$$endif$
+\cleardoublepage
+\linenumbers
+$if(abstract)$\begin{abstract}\noindent $abstract$$if(copyrightyear)$\newline\bigskip \copyright~$copyrightyear$~Acoustical Society of America$endif$$if(keywords)$\newline\bigskip\bigskip Keywords: $for(keywords)$$keywords$$sep$, $endfor$$endif$\end{abstract}\cleardoublepage$endif$
 
 $for(include-before)$
 $include-before$
@@ -157,18 +134,8 @@ $endfor$
 
 $body$
 
-\cleardoublepage
-
 %% ACKNOWLEDGMENTS MUST LATER BE MOVED BEFORE APPENDICES
 $if(acknowledgments)$\section*{acknowledgments}$acknowledgments$\cleardoublepage$endif$
-
-%% ENDNOTES
-%\begingroup
-%\parindent 0pt
-%\parskip 1em
-%\theendnotes
-%\endgroup
-%\cleardoublepage
 
 $if(natbib)$
 $if(biblio-files)$
