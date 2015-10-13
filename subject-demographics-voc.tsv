@@ -1,0 +1,17 @@
+participant	date	age_at_session	sex	hispanic	race
+AA	2013-Nov-14	29.08	m	0	white
+AB	2013-Aug-08	24.82	f	0	asian
+AI	2013-Oct-09	28.97	m	0	white
+AJ	2013-Aug-09	34.02	m	0	asian
+AM	2013-Sep-12	19.9	m	0	white
+AR	2013-Nov-13	35.05	m	0	white
+BX	2013-Sep-19	24.3	m	0	white
+CH	2013-Sep-16	23.99	m	0	white
+CM	2013-Aug-08	27.57	f	0	multiracial
+CO	2013-Oct-18	22.69	f	0	white
+CP	2013-Oct-08	24.64	f	0	white
+CQ	2013-Nov-14	23.75	f	0	white
+CR	2013-Nov-08	22.69	m	0	white
+CW	2013-Nov-08	26.5	f	1	multiracial
+DE	2013-Nov-05	20.29	f	0	asian
+DF	2013-Nov-15	20.3	f	0	multiracial

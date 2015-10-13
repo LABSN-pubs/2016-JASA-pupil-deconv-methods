@@ -1,0 +1,11 @@
+participant	date	age_at_session	sex	hispanic	race
+AA	2014-Apr-23	29.52	m	0	white
+AI	2014-Apr-22	29.5	m	0	white
+AR	2014-Apr-22	35.49	m	0	white
+CH	2014-Apr-23	24.59	m	0	white
+CI	2014-May-02	28.61	f	0	white
+CO	2014-Apr-30	23.22	f	0	white
+CQ	2014-Apr-23	24.19	f	0	white
+CR	2014-Apr-28	23.16	m	0	white
+CT	2014-Apr-29	21.03	f	0	asian
+CW	2014-May-01	26.98	f	1	multiracial
