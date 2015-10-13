@@ -33,7 +33,7 @@ axiscol = '0.8'
 tickcol = '0.8'
 ticklabcol = '0.5'
 axislabcol = '0.3'
-conf = '#88ccee'
+conf = '0.7'  # '#88ccee'
 
 # file I/O
 work_dir = '..'
