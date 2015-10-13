@@ -177,8 +177,8 @@ for subj in subjects:
         # continuous deconvolution
         if run_continuous_deconv:
             print('  Downsampling...')
-            a, b = ss.butter(1, 12.5)
-            fs_out = 25  # no freq. content above 10 Hz in avg data or kernel
+            fs_out = 25.  # no freq. content above 10 Hz in avg data or kernel
+            b, a = ss.butter(1, fs_out / fs)
             signal_samp = np.round(
                 zscores_structured.shape[-1] * fs_out / float(fs)).astype(int)
             ksamp = np.round(kernel.shape[-1] * fs_out / float(fs)).astype(int)
@@ -186,7 +186,8 @@ for subj in subjects:
             zscores_downsamp, t_downsamp = ss.resample(zscores_lowpass,
                                                        signal_samp,
                                                        t=epochs.times, axis=-1)
-            kernel_lowpass = ss.resample(kernel, ksamp)
+            kernel_lowpass = ss.lfilter(b, a, kernel)
+            kernel_downsamp = ss.resample(kernel_lowpass, ksamp)
             # zero padding
             zeropad = np.zeros(zscores_downsamp.shape[:-1] + (ksamp,))
             zscores_zeropadded = np.c_[zeropad, zscores_downsamp, zeropad]
@@ -204,7 +205,7 @@ for subj in subjects:
                                                         _band, :]
                             (fit_continuous_deconv[_trial, _gap, _attn,
                                                    _band, :],
-                             _) = ss.deconvolve(signal, kernel_lowpass)
+                             _) = ss.deconvolve(signal, kernel_downsamp)
             assert not np.any(fit_continuous_deconv == np.inf)
             # remove zero padding
             fit_continuous_deconv = fit_continuous_deconv[:, :, :, :,
