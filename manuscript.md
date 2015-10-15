@@ -31,7 +31,7 @@ keywords:
 - attention
 biblio-style: pupil-kernel
 biblio-files: bib/pupil-kernel
-reviewers: Thomas Koelewijn, Gerald Kidd, Bill Yost, Stephanie Kuchinsky, Virginia Best
+reviewers: Thomas Koelewijn, Gerald Kidd, Virginia Best, Stephanie Kuchinsky, Bill Yost
 abstract: Analysis of pupil dilation has been used as an index of attentional effort in the auditory domain. Previous work has modeled the pupillary response to attentional effort as a linear time-invariant system with a characteristic impulse response, and used deconvolution to estimate the attentional effort that gives rise to changes in pupil size. Here we argue that one parameter of the impulse response ($t_\mathrm{max}$) has been mis-estimated in the literature; we present our own estimate and show how deconvolution with our value of $t_\mathrm{max}$ yields more intuitively plausible and informative results.
 ---
 
