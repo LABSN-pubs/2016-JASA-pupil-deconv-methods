@@ -32,15 +32,15 @@ makepre: bib/pupil-kernel.bib prepress.tex pandoc/latex-postprocessor.py linkpdf
 
 manuscript.tex: manuscript.md  bib/jasa-el-manuscript.bst pandoc/template-JASA-EL-manuscript.tex figures/fig-1.pdf figures/fig-2.pdf figures/fig-4.pdf
 	ln -sf bib/jasa-el-manuscript.bst pupil-kernel.bst
-	pandoc --latex-engine=xelatex --natbib --no-tex-ligatures --template=pandoc/template-JASA-EL-manuscript.tex --output=manuscript.tex manuscript.md
+	pandoc --filter pandoc-eqnos --natbib --no-tex-ligatures --template=pandoc/template-JASA-EL-manuscript.tex --output=manuscript.tex manuscript.md
 
 submission.tex: manuscript.md bib/jasa-el-submission.bst pandoc/template-JASA-EL-submission.tex figures/fig-1.eps figures/fig-2.eps figures/fig-4.eps
-	ln -sf bib/jasa-el-prepress.bst pupil-kernel.bst
-	pandoc --latex-engine=pdflatex --natbib --template=pandoc/template-JASA-EL-submission.tex --output=submission.tex manuscript.md
+	ln -sf bib/jasa-el-submission.bst pupil-kernel.bst
+	pandoc --filter pandoc-eqnos --natbib --template=pandoc/template-JASA-EL-submission.tex --output=submission.tex manuscript.md
 
-prepress.tex: manuscript.md bib/jasa-el-prepress.bst pandoc/template-JASA-EL-prepress.tex figures/fig-1.pdf figures/fig-2.pdf figures/fig-4.pdf
-	ln -sf bib/jasa-el-prepress.bst pupil-kernel.bst
-	pandoc --latex-engine=xelatex --natbib --template=pandoc/template-JASA-EL-prepress.tex --output=prepress.tex manuscript.md
+prepress.tex: manuscript.md bib/jasa-el-submission.bst pandoc/template-JASA-EL-prepress.tex figures/fig-1.pdf figures/fig-2.pdf figures/fig-4.pdf
+	ln -sf bib/jasa-el-submission.bst pupil-kernel.bst
+	pandoc --filter pandoc-eqnos --natbib --template=pandoc/template-JASA-EL-prepress.tex --output=prepress.tex manuscript.md
 
 figures/fig-%.pdf: figures/fig-%.py
 	cd $(<D); python $(<F)
