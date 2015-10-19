@@ -30,8 +30,8 @@ makepre: bib/pupil-kernel.bib prepress.tex pandoc/latex-postprocessor.py linkpdf
 	xelatex McCloyEtAl-pupil-deconvolution-prepress.tex
 	xelatex McCloyEtAl-pupil-deconvolution-prepress.tex
 
-manuscript.tex: manuscript.md bib/jasa-el-manuscript.bst pandoc/template-JASA-EL-manuscript.tex figures/fig-1.pdf figures/fig-2.pdf figures/fig-3.pdf
-	ln -sf bib/jasa-el-manuscript.bst pupil-kernel.bst
+manuscript.tex: manuscript.md bib/manuscript-numeric.bst pandoc/template-JASA-EL-manuscript.tex figures/fig-1.pdf figures/fig-2.pdf figures/fig-3.pdf
+	ln -sf bib/manuscript-numeric.bst pupil-kernel.bst
 	pandoc --filter pandoc-eqnos --natbib --no-tex-ligatures --template=pandoc/template-JASA-EL-manuscript.tex --output=manuscript.tex manuscript.md
 
 submission.tex: manuscript.md bib/jasa-el-submission.bst pandoc/template-JASA-EL-submission.tex figures/fig-1.eps figures/fig-2.eps figures/fig-3.eps
