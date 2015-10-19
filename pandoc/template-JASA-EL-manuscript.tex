@@ -2,7 +2,7 @@
 % !TEX encoding = UTF-8
 \documentclass[$if(fontsize)$$fontsize$,$endif$$if(lang)$$lang$,$endif$$if(papersize)$$papersize$,$endif$$for(classoption)$$classoption$$sep$,$endfor$]{$documentclass$}
 $if(geometry)$\usepackage[$for(geometry)$$geometry$$sep$,$endfor$]{geometry}$endif$
-$if(natbib)$\usepackage{natbib}\bibliographystyle{$if(biblio-style)$$biblio-style$$else$plainnat$endif$}$endif$
+$if(natbib)$\usepackage[super,sort&compress,comma]{natbib}\bibliographystyle{$if(biblio-style)$$biblio-style$$else$plainnat$endif$}$endif$
 $if(biblatex)$\usepackage{biblatex}$if(biblio-files)$\bibliography{$biblio-files$}$endif$$endif$
 $if(listings)$\usepackage{listings}$endif$
 $if(tables)$\usepackage{tabularx,array,booktabs,multirow}$endif$
