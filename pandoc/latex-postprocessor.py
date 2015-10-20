@@ -9,6 +9,12 @@ with open(infile, 'r') as f, open(outfile, 'w') as g:
     for line in f:
         ## spacing hacks
         line = line.replace(' vs. ', ' vs.\ ')
+        line = line.replace(' Hz', '~Hz')
+        line = line.replace(' kHz', '~kHz')
+        line = line.replace(' ms ', '~ms ')
+        line = line.replace(' s ', '~s ')
+        line = line.replace(' s,', '~s,')
+        line = line.replace(' s.', '~s.')
         line = line.replace('cf. ', 'cf.\ ')
         line = line.replace('St. ', 'St.\ ')
         line = line.replace('Table ', 'Table~')
