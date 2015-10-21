@@ -13,11 +13,12 @@ makeweb: bib/pupil-kernel.bib manuscript.tex pandoc/latex-postprocessor.py linkp
 	xelatex McCloyEtAl-pupil-deconvolution-manuscript.tex
 	xelatex McCloyEtAl-pupil-deconvolution-manuscript.tex
 
-makesub: bib/pupil-kernel.bib submission.tex pandoc/latex-postprocessor.py linkeps
+makesub: bib/pupil-kernel.bib submission.tex pandoc/latex-postprocessor.py pandoc/latex-make-standalone.py pandoc/latex-suppress-figures.py linkeps
 	python pandoc/latex-postprocessor.py -s submission.tex submission-temp.tex
 	pdflatex submission-temp.tex
 	bibtex8 submission-temp.aux
 	python ./pandoc/latex-make-standalone.py submission-temp.tex McCloyEtAl-pupil-deconvolution.tex
+	python ./pandoc/latex-suppress-figures.py McCloyEtAl-pupil-deconvolution.tex McCloyEtAl-pupil-deconv-no-figs.tex
 	pdflatex McCloyEtAl-pupil-deconvolution.tex
 	pdflatex McCloyEtAl-pupil-deconvolution.tex
 	pdflatex McCloyEtAl-pupil-deconvolution.tex

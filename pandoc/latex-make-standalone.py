@@ -21,12 +21,11 @@ bib = bib.replace('–', '--')
 bib = bib.replace('“', '``')
 bib = bib.replace('”', '\'\'')
 
-with open(infile, 'r') as f:
-    with open(outfile, 'w') as g:
-        for line in f:
-            if '\\bibliography{' in line:
-                line = bib
-            if '\\listoffigures' in line:
-                g.write('\\section*{List of figures}\n')
-                line = figs
-            g.write(line)
+with open(infile, 'r') as f, open(outfile, 'w') as g:
+    for line in f:
+        if '\\bibliography{' in line:
+            line = bib
+        if '\\listoffigures' in line:
+            g.write('\\section*{List of figures}\n')
+            line = figs
+        g.write(line)
