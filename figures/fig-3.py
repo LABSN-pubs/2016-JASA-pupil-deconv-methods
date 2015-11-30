@@ -217,7 +217,7 @@ for (ax, t, clu, cluster_ymin, cluster_ymax) in signifs:
 '''
 
 if savefig:
-    fig.savefig('fig-4.pdf')
+    fig.savefig('fig-3.pdf')
 else:
     plt.ion()
     plt.show()
