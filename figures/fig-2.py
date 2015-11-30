@@ -47,7 +47,8 @@ centers_x = [0.23, 0.75, 1.75, 2.25, 3.35, 3.85, 1.75, 2.25, 3.35, 3.85]
 centers_y = [2] * 6 + [0] * 4
 box_x = [(0, 0, 1, 1)] + [(1.5, 1.5, 2.5, 2.5), (3.1, 3.1, 4.1, 4.1)] * 2
 box_y = [(1.5, 2.5, 2.5, 1.5)] * 3 + [(-0.5, 0.5, 0.5, -0.5)] * 2
-box_l = ['AA', 'AU', 'E', 'O', 'P', 'O', 'G', 'V', 'E', 'U']  # ADEGOPUV
+# cue AB target O foils DEGPUV
+box_l = ['AA', 'AB', 'E', 'O', 'P', 'O', 'G', 'V', 'E', 'U']
 color = [maintcol, switchcol] + [lettercol] * 8
 bcolor = [cuecol] + [malecol] * 2 + [femalecol] * 2
 ecolor = ['k'] + ['none'] * 4
