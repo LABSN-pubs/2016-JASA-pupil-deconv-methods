@@ -68,21 +68,24 @@ axislabcol = '0.3'
 ticklabcol = '0.5'
 
 # set up figure
-fig = plt.figure(figsize=(3, 2.25))
-ax = plt.subplot(111)
+fig, axs = plt.subplots(1, 2, figsize=(6.5, 2.5))
+#fig = plt.figure(figsize=(3, 2.25))
+#ax = plt.subplot(111)
 xlim = [t_min, t_max]
 #signifs = list()
 
-for ii, (t, data) in enumerate(zip([t_fit, t_zs, t_wierda],
-                                   [data_deconv, data_zscore, data_wierda])):
+for ii, (t, data) in enumerate(zip([t_zs, t_fit, t_wierda],
+                                   [data_zscore, data_deconv, data_wierda])):
+    ax = axs[0] if ii == 0 else axs[1]
     # collapse across trials and experimental contrasts
     # axis 1 is trials, 2 is gap dur, 3 is maint/switch, 4 is num voc channels
     '''chan_10_vs_20 = np.nanmean(data, axis=(1, 2, 3))'''
     '''gap_200_vs_600 = np.nanmean(data, axis=(1, 3, 4))'''
     maint_vs_switch = np.nanmean(data, axis=(1, 2, 4))
     # axis limits
-    ymax = np.ceil(np.max(np.mean(np.nanmean(data_deconv, axis=1), axis=0)))
-    ylim = [-0.6 * ymax, ymax]
+    ymax = np.ceil(np.max(np.mean(np.nanmean(data, axis=1), axis=0)))
+    if ii < 2:  # don't change axis limits for wierda data
+        ylim = [-0.6 * ymax, ymax]
     # y values for stim timecourse diagram
     stim_ymin = ymax * -0.45
     stim_ymax = ymax * -0.3
@@ -92,7 +95,7 @@ for ii, (t, data) in enumerate(zip([t_fit, t_zs, t_wierda],
         # collapse across subjects (only for plotting, not stats)
         contr_std = np.std(contrast, axis=0) / np.sqrt(len(contrast) - 1)
         contr_mean = np.mean(contrast, axis=0)
-        if ii == 0:
+        if ii < 2:
             # plot curves
             for kk, (cond, se) in enumerate(zip(contr_mean, contr_std)):
                 col = [blu, red][kk]
@@ -105,27 +108,42 @@ for ii, (t, data) in enumerate(zip([t_fit, t_zs, t_wierda],
                 # plot mean lines
                 _ = ax.plot(t, cond, color=col, linewidth=1.5, zorder=zord + 3)
                 # TRIAL TIMECOURSE
-                thk = 0.0125 * ymax
-                off = 0.05 * ymax
+                #thk = 0.0125 * ymax
+                #off = 0.05 * ymax
+                thk = 0.04 * ymax
+                off = 0.15 * ymax
+                loff = 0.01 * ymax
                 stim_y = [stim_ymin, stim_ymax][kk]
-                stim_c = [cue] * 2 + [col] * 2 + [[col] * 2, [msk] * 2][kk]
-                stim_m = [msk] * 2 + [[msk] * 2, [col] * 2][kk]
-                stim_t = stim_times + np.array([0] * 4 + [gap_dur] * 2)
-                # cue and attended stims
-                for tt, cl in zip(stim_t, stim_c):
-                    stim_x = (tt, tt + stim_dur)
-                    _ = ax.fill_between(stim_x, stim_y+thk, stim_y-thk,
-                                        color=cl, edgecolor='none', zorder=9)
-                # masker stims
-                for tt, mk in zip(stim_t[2:], stim_m):
-                    stim_x = (tt, tt + stim_dur)
-                    _ = ax.fill_between(stim_x, stim_y+thk-off, stim_y-thk-off,
-                                        color=mk, edgecolor='none', zorder=9)
+                label_y = [stim_ymax, stim_ymax-off][kk]
+                # lines
+                if kk == 0:
+                    ax.plot((1, 4.4), (stim_ymax+loff, stim_ymax+loff),
+                            color=col, linewidth=1.5, solid_capstyle='butt')
+                else:
+                    ax.plot((1, 2.5, 3.1, 4.4),
+                            (stim_y-loff, stim_y-loff, stim_y-off, stim_y-off),
+                            color=col, linewidth=1.5, linestyle='--')
+
+                    stim_c = [cue] * 2 + [msk] * 4
+                    stim_m = [msk] * 4
+                    stim_t = stim_times + np.array([0] * 4 + [gap_dur] * 2)
+                    # cue and attended stims
+                    for tt, cl in zip(stim_t, stim_c):
+                        stim_x = (tt, tt + stim_dur)
+                        _ = ax.fill_between(stim_x, stim_y+thk, stim_y-thk,
+                                            color=cl, edgecolor='none',
+                                            zorder=9)
+                    # masker stims
+                    for tt, mk in zip(stim_t[2:], stim_m):
+                        stim_x = (tt, tt + stim_dur)
+                        _ = ax.fill_between(stim_x, stim_y+thk-off,
+                                            stim_y-thk-off, color=mk,
+                                            edgecolor='none', zorder=9)
                 # timecourse labels
                 lab = ['maintain', 'switch'][kk]
-                _ = ax.annotate(lab, (0, stim_y), xytext=(-6, 0),
+                _ = ax.annotate(lab, (4.4, label_y), xytext=(6, 0),
                                 textcoords='offset points', color=col,
-                                ha='right', va='center', fontsize=9,
+                                ha='left', va='center', fontsize=9,
                                 fontstyle='italic')
             # cue label
             _ = ax.annotate('cue', xy=(stim_times[1], stim_ymax + thk),
@@ -156,7 +174,7 @@ for ii, (t, data) in enumerate(zip([t_fit, t_zs, t_wierda],
                 pval_x = t[int(np.mean(clu[[0, -1]]))]
                 pval_y = -0.1 * ylim[1]
                 pval_ord = np.trunc(np.log10(pv)).astype(int)
-                if ii == 0:
+                if ii < 2:
                     _ = hatch_between(ax, 9, t[clu], cluster_ymin,
                                       cluster_ymax, linewidth=1.25,
                                       color=signifcol, zorder=1)
@@ -167,47 +185,50 @@ for ii, (t, data) in enumerate(zip([t_fit, t_zs, t_wierda],
                     #signifs.append([ax, t, clu, cluster_ymin, cluster_ymax])
     # vertical lines
     if plot_signif:
-        if ii == 0:
+        if ii < 2:
             ax.plot((t[clu][0], t[clu][0]), (cluster_ymin[0], cluster_ymax[0]),
                     linestyle=':', color='k')
         else:
             # arrows
-            arrow_col = [grn, yel][ii - 1]
-            dx = 0.05
+            arrow_col = 'k'  # [grn, yel][ii - 1]
+            dx = 0.0625
             dy = 0.025 * ymax
             arrow_x = t[clu][0]
             arrow_y = ylim[0] - 7*dy
             arrow_dx = 0
             arrow_dy = 6*dy
-            arr = ax.arrow(arrow_x, arrow_y, arrow_dx, arrow_dy, width=dx,
-                           head_width=5*dx, head_length=3*dy, fc=arrow_col,
-                           ec=(0., 0., 0., 0.2), linewidth=0.5, clip_on=False,
-                           length_includes_head=True)
+            arr = axs[1].arrow(arrow_x, arrow_y, arrow_dx, arrow_dy, width=dx,
+                               head_width=4*dx, head_length=3*dy, fc=arrow_col,
+                               ec='none',  # linewidth=0.5,
+                               clip_on=False, length_includes_head=True)
 
-# set axis limits
-xlim[1] = 1.001 * xlim[1]
-ylim[1] = 1.001 * ylim[1]
-_ = ax.set_ylim(*ylim)
-_ = ax.set_xlim(*xlim)
-# remove yaxis / ticks / ticklabels near bottom
-ytck = [-0.1 * ymax, 1.001 * ymax]
-ytl = ax.yaxis.get_ticklocs()
-_ = ax.spines['left'].set_bounds(*ytck)
-for sp in ['left', 'bottom']:
-    _ = ax.spines[sp].set_color(axiscol)
-_ = ax.yaxis.set_ticks(ytl[ytl > ytck[0]])
-_ = ax.set_ylim(*ylim)  # have to do this twice
-_ = ax.tick_params(color=tickcol, width=0.5, labelcolor=ticklabcol)
+    # set axis limits
+    if ii < 2:
+        xlim[1] = 1.001 * xlim[1]
+        ylim[1] = 1.001 * ylim[1]
+        _ = ax.set_ylim(*ylim)
+        _ = ax.set_xlim(*xlim)
+        # remove yaxis / ticks / ticklabels near bottom
+        ytck = [-0.1 * ymax, 1.001 * ymax]
+        ytl = ax.yaxis.get_ticklocs()
+        _ = ax.spines['left'].set_bounds(*ytck)
+        for sp in ['left', 'bottom']:
+            _ = ax.spines[sp].set_color(axiscol)
+        _ = ax.yaxis.set_ticks(ytl[ytl > ytck[0]])
+        _ = ax.set_ylim(*ylim)  # have to do this twice
+        _ = ax.tick_params(color=tickcol, width=0.5, labelcolor=ticklabcol)
 
-# annotations
-yl = 'Effort (AU)'
-yo = 1 - np.diff(ytck) / np.diff(ylim) / 2.
-_ = ax.set_ylabel(yl, y=yo, color=axislabcol)
-_ = ax.set_xlabel('Time (s)', color=axislabcol)
+        # annotations
+        yl = 'pupil size (z-score)' if ii == 0 else 'Effort (a.u.)'
+        yo = 1 - np.diff(ytck) / np.diff(ylim) / 2.
+        _ = ax.set_ylabel(yl, y=yo, color=axislabcol)
+        _ = ax.set_xlabel('Time (s)', color=axislabcol)
 
-box_off(ax)
-ax.patch.set_facecolor('none')
-fig.tight_layout()
+        box_off(ax)
+        ax.patch.set_facecolor('none')
+fig.tight_layout(w_pad=2., rect=(0.02, 0, 1, 1))
+fig.text(0.01, 0.94, 'a)')
+fig.text(0.52, 0.94, 'b)')
 
 '''
 # hatch_between must come after tight_layout to get same angle on all subplots

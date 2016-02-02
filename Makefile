@@ -71,6 +71,9 @@ cleancommon:
 clean: cleanweb cleansub cleanpre
 	rm -f McCloyEtAl-pupil-deconvolution.pdf McCloyEtAl-pupil-deconvolution-manuscript.pdf $(EPSFIGS) $(PDFFIGS)
 
+revresp:
+	pandoc --no-tex-ligatures --latex-engine=xelatex --template=pandoc/template-plain.tex --output=response-to-reviewers.pdf response-to-reviewers.md
+
 EPSFIGS = figures/*.eps
 
 PDFFIGS = figures/*.pdf
