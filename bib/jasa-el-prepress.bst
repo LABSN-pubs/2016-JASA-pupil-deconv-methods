@@ -942,6 +942,7 @@ FUNCTION {book}
     }
   if$
   format.edition output
+  format.pages output
   new.sentence
   format.note output
   fin.entry

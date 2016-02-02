@@ -980,7 +980,7 @@ FUNCTION {format.org.or.pub}
         'skip$
         { t empty$ address empty$ and
             'skip$
-            { ", " swap$ * * }
+            { ", " * }
           if$
           year "year" bibinfo.check
           *
@@ -1051,6 +1051,7 @@ FUNCTION {book}
     }
   if$
   format.edition output
+  format.pages output
   format.doi output
   new.block
   format.url output
