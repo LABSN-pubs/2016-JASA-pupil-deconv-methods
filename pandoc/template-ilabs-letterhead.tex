@@ -1,0 +1,84 @@
+% !TEX TS-program = xelatex
+% !TEX encoding = UTF-8
+\documentclass[$if(fontsize)$$fontsize$,$endif$$if(lang)$$lang$,$endif$$if(papersize)$$papersize$,$endif$$for(classoption)$$classoption$$sep$,$endfor$]{$documentclass$}
+$if(geometry)$\usepackage[$for(geometry)$$geometry$$sep$,$endfor$]{geometry}$endif$
+$if(listings)$\usepackage{listings}$endif$
+$if(tables)$\usepackage{tabularx,array,booktabs,multirow}$endif$
+% use microtype if available
+\IfFileExists{microtype.sty}{\usepackage{microtype}}{}
+
+$if(graphics)$
+\usepackage[xetex]{graphicx}
+$endif$
+
+\usepackage{hyperref}
+\hypersetup{breaklinks=true,
+            bookmarks=true,
+            pdfauthor="Daniel McCloy",
+            pdftitle={$title-meta$},
+            colorlinks=false,
+            pdfborder={0 0 0}}
+
+\usepackage{setspace, parskip, fancyhdr, color}
+% formatting for section & subsection headings and table captions
+\usepackage[compact]{titlesec}
+\titlespacing*{\section}{0pt}{\parskip}{-0.5\parskip}
+\titlespacing*{\subsection}{0pt}{0pt}{-0.75\parskip}
+\titleformat{\section}[runin]{\bfseries\uppercase}{}{0em}{}[\setlength{\parindent}{0.75em}\indent]
+\titleformat*{\subsection}{\bfseries\itshape}
+% format various headings to match the style of section headings 
+\renewcommand{\refname}{\bfseries\uppercase{references}}
+
+% % % % % % % % % % % % % 
+% other customizations  %
+% % % % % % % % % % % % % 
+\usepackage[shortcuts]{extdash}
+\usepackage{fontspec}
+\setmainfont[Numbers={Lining}]{Linux Libertine O} 
+\setmonofont[ItalicFont={M+ 1m}]{M+ 1m}
+\renewcommand{\url}{\begingroup \def\UrlLeft{}\def\UrlRight{}\urlstyle{same}\Url} % set URLs in whatever font surrounding text uses
+
+% % % % % % % %
+% letterhead  %
+% % % % % % % %
+\pagestyle{fancy}
+\fancyhf{}% clear all header/footer defs
+\fancyhead[C]{\includegraphics[width=6.5in]{pandoc/ILABS-banner.pdf}}
+\fancyfoot[L]{1715 NE Columbia Rd, Box 357988, Seattle WA 98195-7988}
+\fancyfoot[R]{ph.\ 206-543-6000 \hspace{0.5em} fax 206-221-6472}
+\setlength{\voffset}{0in}% 1 inch is added to this automatically
+\setlength{\headheight}{0.95in}% height of logo banner = 0.94 in
+\setlength{\headsep}{0.55in}
+\setlength{\textheight}{8in}
+\setlength{\footskip}{0.5in}
+\renewcommand{\headrule}{}
+\renewcommand{\footrulewidth}{0.5pt}
+% make the footer line blue to match logo ampersand
+\definecolor{blu}{cmyk}{0.55, 0.43, 0, 0.25}
+\usepackage{etoolbox}
+\patchcmd{\footrule}{\hrule}{\color{blu}\hrule}{}{}
+% % % % % % % % %
+% MAIN DOCUMENT %
+% % % % % % % % %
+\begin{document}
+%\raggedright
+
+\begin{flushright}$if(date)$$date$$else$\today$endif$\end{flushright}\bigskip%
+
+$body$
+
+\bigskip
+\hfill\begin{minipage}{\dimexpr0.5\textwidth}
+$if(closing)$$closing$\par$endif$
+$for(author)$
+$if(author.signature)$\includegraphics{$author.signature$}\par$endif$
+$if(author.name)$$author.name$\\$endif$
+$if(author.affiliation)$$for(author.affiliation)$$author.affiliation$$sep$\\$endfor$$endif$
+$endfor$
+\end{minipage}
+
+$for(include-after)$
+$include-after$
+$endfor$
+
+\end{document}
