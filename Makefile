@@ -74,6 +74,9 @@ clean: cleanweb cleansub cleanpre
 revresp:
 	pandoc --no-tex-ligatures --latex-engine=xelatex --template=pandoc/template-plain.tex --output=response-to-reviewers.pdf response-to-reviewers.md
 
+coverletter:
+	pandoc --no-tex-ligatures --latex-engine=xelatex --template=pandoc/template-ilabs-letterhead.tex --output=cover-letter.pdf cover-letter.md
+
 EPSFIGS = figures/*.eps
 
 PDFFIGS = figures/*.pdf
