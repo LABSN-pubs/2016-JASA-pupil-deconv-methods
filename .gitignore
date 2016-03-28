@@ -1,8 +1,7 @@
 # folders
-data
-voc-data
+admin
+reviews
+cover-letter
 
 # files
-*.npz
-cover-letter*
 McCloyEtAl-*
