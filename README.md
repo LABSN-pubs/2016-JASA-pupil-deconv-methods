@@ -1,6 +1,13 @@
 # Pupillometry deconvolution methods
 This is a methods paper on deconvolution of pupillometry data for auditory
-experiments. Raw data is cleaned and aggregated with `analyze-data.py` (for the
+experiments.
+
+> McCloy D, Larson E, Lau B, & Lee AKC (2016). Temporal alignment of pupillary
+response with stimulus events via deconvolution. _The Journal of the Acoustical
+Society of America, 139_(3), EL57–EL62. doi:
+[10.1121/1.4943787](http://dx.doi.org/10.1121/1.4943787)
+
+Raw data is cleaned and aggregated with `analyze-data.py` (for the
 pupil impulse response experiment) and `analyze-voc-data.py` (for the vocoded
 letters experiment). These should create the summary data objects needed to
 create the figures (`avg_data.npz` for Figure 1; `voc_data.npz` and
